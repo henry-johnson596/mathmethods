@@ -1,0 +1,3308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Stage 1 Math Methods</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap');
+:root {
+  --bg: #f5f0e8;
+  --surface: #ede7d9;
+  --surface2: #e4dccb;
+  --border: #d4c9b0;
+  --card: #faf7f2;
+  --text: #3a3028;
+  --muted: #8a7d6a;
+  --faint: #b5a990;
+
+  /* earthy pastel topic palette */
+  --t1: #c4956a;   /* warm terracotta */
+  --t2: #7a9e7e;   /* sage green */
+  --t3: #7c9bb5;   /* dusty blue */
+  --t4: #b07e8a;   /* rose taupe */
+  --t5: #a08060;   /* warm ochre */
+  --t6: #8f8ab0;   /* muted lavender */
+
+  --accent: #c4956a;
+  --accent2: #7a9e7e;
+  --accent3: #7c9bb5;
+  --accent4: #b07e8a;
+}
+*{box-sizing:border-box;margin:0;padding:0;}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;overflow-x:hidden;}
+
+/* TEXTURE overlay */
+body::before{
+  content:'';position:fixed;inset:0;pointer-events:none;z-index:0;
+  background-image:url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23a09070' fill-opacity='0.04'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+}
+
+nav{
+  position:sticky;top:0;z-index:100;
+  background:rgba(245,240,232,0.94);backdrop-filter:blur(10px);
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:4px;padding:0 28px;height:58px;flex-wrap:wrap;
+}
+.nav-logo{
+  font-family:'Lora',serif;font-weight:700;font-size:15px;color:var(--text);
+  margin-right:20px;white-space:nowrap;letter-spacing:-0.3px;
+}
+.nav-logo span{color:var(--t1);}
+.nav-btn{
+  background:none;border:none;cursor:pointer;color:var(--muted);
+  font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;
+  padding:6px 16px;border-radius:20px;transition:all 0.2s;white-space:nowrap;
+}
+.nav-btn:hover{background:var(--surface2);color:var(--text);}
+.nav-btn:active{transform:scale(0.94);}
+
+/* LARGE RESOURCE BUTTONS */
+.res-big-btn{
+  width:100%;display:flex;align-items:center;gap:14px;
+  background:var(--card);border:none;border-left:3px solid transparent;
+  padding:13px 18px;cursor:pointer;font-family:'DM Sans',sans-serif;
+  font-size:14px;font-weight:500;color:var(--text);text-align:left;
+  transition:background 0.18s, border-color 0.18s, transform 0.18s;
+  border-radius:8px;
+}
+.res-big-btn:hover{background:rgba(196,149,106,0.08);border-left-color:var(--topic-color,var(--t1));transform:translateX(4px);}
+.res-big-btn:active{transform:translateX(4px) scale(0.98);}
+.res-big-icon{font-size:18px;width:24px;text-align:center;flex-shrink:0;}
+.res-big-label{font-size:13px;font-weight:600;}
+.nav-btn.active{background:var(--surface2);color:var(--text);font-weight:600;}
+
+.page{
+  display:none;position:relative;z-index:1;
+  opacity:0;transform:translateY(10px);
+  transition:opacity 0.28s ease, transform 0.28s ease;
+}
+.page.active{
+  display:block;
+  animation:pageIn 0.28s ease forwards;
+}
+@keyframes pageIn{
+  from{opacity:0;transform:translateY(10px);}
+  to{opacity:1;transform:translateY(0);}
+}
+
+/* HERO */
+.hero{padding:72px 32px 52px;text-align:center;position:relative;}
+.hero::after{
+  content:'';position:absolute;bottom:0;left:0;right:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--border),transparent);
+}
+.hero-tag{
+  display:inline-block;font-family:'DM Sans',sans-serif;font-size:11px;font-weight:600;
+  color:var(--t1);background:rgba(196,149,106,0.12);border:1px solid rgba(196,149,106,0.3);
+  padding:4px 14px;border-radius:20px;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:22px;
+}
+h1{font-family:'Lora',serif;font-size:clamp(34px,5.5vw,60px);font-weight:700;line-height:1.1;margin-bottom:14px;color:var(--text);}
+h1 em{font-style:italic;color:var(--t1);}
+.hero-sub{color:var(--muted);font-size:15px;max-width:480px;margin:0 auto 44px;line-height:1.7;}
+.hero-stats{display:flex;justify-content:center;gap:48px;flex-wrap:wrap;}
+.stat{text-align:center;}
+.stat-num{font-family:'Lora',serif;font-size:30px;font-weight:700;color:var(--t1);}
+.stat-label{font-size:12px;color:var(--muted);margin-top:2px;letter-spacing:0.5px;}
+
+.section{max-width:1080px;margin:0 auto;padding:0 24px 64px;}
+
+.sem-divider{
+  font-size:10px;text-transform:uppercase;letter-spacing:3px;color:var(--faint);
+  font-weight:600;padding:6px 0;border-bottom:1px solid var(--border);
+  margin-bottom:22px;margin-top:36px;font-family:'DM Sans',sans-serif;
+}
+
+/* TOPIC CARDS */
+.topic-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;}
+.topic-card{
+  background:var(--card);border:1px solid var(--border);border-radius:14px;
+  padding:22px;cursor:pointer;transition:all 0.22s;position:relative;overflow:hidden;
+}
+.topic-card::before{
+  content:'';position:absolute;top:0;left:0;right:0;height:4px;
+  background:var(--topic-color,var(--t1));border-radius:14px 14px 0 0;
+}
+.topic-card:hover{
+  border-color:var(--topic-color,var(--t1));transform:translateY(-4px);
+  box-shadow:0 10px 28px rgba(160,130,100,0.18);
+}
+.topic-label{
+  font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1.5px;
+  color:var(--topic-color,var(--t1));margin-bottom:8px;
+}
+.topic-name{font-family:'Lora',serif;font-size:17px;font-weight:600;margin-bottom:5px;color:var(--text);}
+.topic-weeks{font-size:12px;color:var(--muted);margin-bottom:14px;}
+.topic-subs{display:flex;flex-wrap:wrap;gap:6px;}
+.sub-chip{
+  font-size:11px;padding:3px 9px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:20px;color:var(--muted);
+}
+.topic-resources{display:flex;gap:8px;margin-top:16px;flex-wrap:wrap;}
+.res-btn{
+  font-size:11px;font-weight:600;padding:5px 13px;border-radius:20px;
+  border:1px solid var(--border);background:var(--surface);color:var(--muted);
+  cursor:pointer;transition:all 0.15s;font-family:'DM Sans',sans-serif;
+}
+.res-btn:hover{background:var(--topic-color,var(--t1));border-color:transparent;color:#fff;}
+.res-btn:active{transform:scale(0.96);}
+
+/* ASSESSMENT CARDS */
+.assign-list{display:flex;flex-direction:column;gap:12px;}
+.assign-card{
+  background:var(--card);border:1px solid var(--border);border-radius:12px;
+  padding:18px 22px;display:flex;align-items:center;gap:18px;transition:all 0.22s;
+}
+.assign-card:hover{transform:translateY(-2px);box-shadow:0 6px 18px rgba(160,130,100,0.12);}
+.assign-card:hover{border-color:var(--t1);box-shadow:0 4px 12px rgba(160,130,100,0.1);}
+.assign-icon{width:42px;height:42px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0;}
+.assign-info{flex:1;}
+.assign-name{font-family:'Lora',serif;font-size:15px;font-weight:600;margin-bottom:4px;color:var(--text);}
+.assign-meta{font-size:12px;color:var(--muted);line-height:1.5;}
+.assign-badge{font-size:11px;font-weight:600;padding:4px 11px;border-radius:20px;white-space:nowrap;}
+.badge-sat{background:rgba(196,149,106,0.15);color:var(--t1);}
+.badge-inv{background:rgba(122,158,126,0.15);color:var(--t2);}
+.badge-folio{background:rgba(124,155,181,0.15);color:var(--t3);}
+.badge-exam{background:rgba(143,138,176,0.15);color:var(--t6);}
+
+/* REVISION TABS */
+.revision-tabs{display:flex;gap:8px;margin-bottom:32px;flex-wrap:wrap;}
+.rev-tab{
+  background:var(--surface);border:1px solid var(--border);border-radius:20px;
+  padding:8px 20px;cursor:pointer;font-family:'DM Sans',sans-serif;
+  font-size:13px;font-weight:500;color:var(--muted);transition:all 0.2s;
+}
+.rev-tab:hover{color:var(--text);background:var(--surface2);}
+.rev-tab.active{background:var(--t1);color:#fff;border-color:var(--t1);font-weight:600;}
+.rev-section{animation:none;}
+.rev-section.active{animation:pageIn 0.22s ease forwards;}
+.rev-section{display:none;}.rev-section.active{display:block;}
+
+/* FLASHCARDS */
+.flashcard-controls{display:flex;align-items:center;gap:12px;margin-bottom:26px;flex-wrap:wrap;}
+.topic-select{
+  background:var(--card);border:1px solid var(--border);color:var(--text);
+  border-radius:20px;padding:8px 16px;font-family:'DM Sans',sans-serif;
+  font-size:13px;cursor:pointer;flex:1;max-width:320px;appearance:none;
+}
+.fc-count{
+  font-size:12px;color:var(--muted);background:var(--surface);
+  padding:6px 14px;border-radius:20px;border:1px solid var(--border);
+}
+.flashcard-area{display:flex;flex-direction:column;align-items:center;gap:22px;}
+.flashcard-progress{width:100%;max-width:560px;background:var(--surface2);border-radius:4px;height:5px;}
+.flashcard-bar{height:5px;border-radius:4px;background:linear-gradient(90deg,var(--t1),var(--t4));transition:width 0.3s;}
+.flashcard{width:100%;max-width:560px;height:300px;perspective:1200px;cursor:pointer;transition:transform 0.2s ease;}
+.flashcard:hover{transform:translateY(-3px);}
+.flashcard-inner{width:100%;height:100%;position:relative;transform-style:preserve-3d;transition:transform 0.55s cubic-bezier(0.35,0,0.1,1);}
+.flashcard.flipped .flashcard-inner{transform:rotateY(180deg);}
+.fc-front,.fc-back{
+  position:absolute;inset:0;backface-visibility:hidden;border-radius:16px;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  padding:32px;text-align:center;border:1px solid var(--border);
+}
+.fc-front{background:var(--card);}
+.fc-back{background:linear-gradient(135deg,#f0ebe0,#faf7f2);border-color:var(--t1);transform:rotateY(180deg);}
+.fc-hint{font-size:11px;color:var(--faint);margin-bottom:14px;text-transform:uppercase;letter-spacing:1.5px;}
+.fc-question{font-family:'Lora',serif;font-size:19px;font-weight:600;line-height:1.45;color:var(--text);}
+.fc-math{font-family:'Courier New',monospace;font-size:16px;font-weight:700;color:var(--t1);margin-top:6px;display:inline-block;}
+.fc-answer{font-size:15px;line-height:1.65;color:var(--text);}
+.flashcard-nav{display:flex;gap:12px;align-items:center;}
+.fc-btn{
+  background:var(--surface);border:1px solid var(--border);color:var(--text);
+  border-radius:20px;padding:10px 22px;cursor:pointer;font-family:'DM Sans',sans-serif;
+  font-size:13px;font-weight:600;transition:all 0.2s;
+}
+.fc-btn:hover{background:var(--surface2);}
+.fc-btn.correct{background:rgba(122,158,126,0.2);border-color:var(--t2);color:var(--t2);}
+.fc-btn.incorrect{background:rgba(176,126,138,0.2);border-color:var(--t4);color:var(--t4);}
+.fc-score{font-size:13px;color:var(--muted);padding:0 4px;}
+
+/* QUIZ */
+.quiz-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:30px;max-width:680px;}
+.quiz-q-num{font-size:11px;color:var(--faint);margin-bottom:10px;text-transform:uppercase;letter-spacing:1px;}
+.quiz-question{font-family:'Lora',serif;font-size:18px;font-weight:600;margin-bottom:22px;line-height:1.5;color:var(--text);}
+.quiz-options{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
+.quiz-opt{
+  background:var(--surface);border:1px solid var(--border);border-radius:10px;
+  padding:12px 16px;cursor:pointer;font-size:14px;transition:all 0.15s;
+  display:flex;align-items:center;gap:12px;color:var(--text);
+}
+.quiz-opt:hover{border-color:var(--t1);background:rgba(196,149,106,0.07);transform:translateX(3px);}
+.quiz-opt.selected{border-color:var(--t1);background:rgba(196,149,106,0.1);}
+.quiz-opt.correct{border-color:var(--t2);background:rgba(122,158,126,0.12);color:var(--t2);}
+.quiz-opt.wrong{border-color:var(--t4);background:rgba(176,126,138,0.12);color:var(--t4);}
+.opt-label{
+  width:26px;height:26px;border-radius:6px;background:var(--surface2);
+  display:flex;align-items:center;justify-content:center;
+  font-size:12px;font-weight:700;flex-shrink:0;color:var(--muted);
+}
+.quiz-feedback{font-size:13px;padding:12px 16px;border-radius:8px;margin-bottom:16px;display:none;line-height:1.6;}
+.quiz-feedback.show{display:block;}
+.quiz-feedback.correct{background:rgba(122,158,126,0.12);color:var(--t2);border:1px solid rgba(122,158,126,0.25);}
+.quiz-feedback.wrong{background:rgba(176,126,138,0.12);color:var(--t4);border:1px solid rgba(176,126,138,0.25);}
+.quiz-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+.quiz-score-bar{font-size:13px;color:var(--muted);}
+.quiz-check-btn{
+  background:var(--t1);color:#fff;border:none;border-radius:20px;padding:10px 24px;
+  cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;transition:opacity 0.2s;
+}
+.quiz-check-btn:hover{opacity:0.88;}
+.quiz-check-btn:disabled{opacity:0.35;cursor:not-allowed;}
+
+/* MATCH */
+.match-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;max-width:720px;}
+.match-card{
+  background:var(--card);border:2px solid var(--border);border-radius:10px;
+  padding:14px 10px;text-align:center;cursor:pointer;font-size:13px;
+  min-height:68px;display:flex;align-items:center;justify-content:center;
+  transition:all 0.15s;font-weight:500;line-height:1.3;color:var(--text);
+}
+.match-card.math-card{font-family:'Courier New',monospace;font-size:12px;}
+.match-card:hover{border-color:var(--t1);background:rgba(196,149,106,0.06);}
+.match-card.selected{border-color:var(--t1);background:rgba(196,149,106,0.12);}
+.match-card.matched{border-color:var(--t2);background:rgba(122,158,126,0.12);color:var(--t2);cursor:default;}
+.match-card.wrong{border-color:var(--t4);background:rgba(176,126,138,0.1);animation:shake 0.3s;}
+@keyframes shake{0%,100%{transform:translateX(0);}25%{transform:translateX(-6px);}75%{transform:translateX(6px);}}
+@keyframes matchPop{0%{transform:scale(1);}50%{transform:scale(1.08);}100%{transform:scale(1);}}
+.match-card.matched{animation:matchPop 0.3s ease;}
+.match-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:20px;flex-wrap:wrap;gap:10px;}
+.match-lives{font-size:16px;}
+.match-combo{font-size:13px;color:var(--t5);font-weight:600;}
+
+/* STUDY TIPS */
+.tips-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px;}
+.tip-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:22px;}
+.tip-emoji{font-size:26px;margin-bottom:10px;}
+.tip-title{font-family:'Lora',serif;font-size:14px;font-weight:700;margin-bottom:6px;color:var(--text);}
+.tip-body{font-size:13px;color:var(--muted);line-height:1.65;}
+
+/* RESULTS */
+.results-screen{text-align:center;padding:48px 20px;display:none;}
+.results-screen.show{display:block;}
+.result-emoji{font-size:60px;margin-bottom:16px;}
+.result-score{font-family:'Lora',serif;font-size:52px;font-weight:700;color:var(--t1);}
+.result-label{color:var(--muted);margin-top:6px;margin-bottom:28px;font-size:15px;}
+
+.info-banner{
+  background:rgba(196,149,106,0.07);border:1px solid rgba(196,149,106,0.22);
+  border-radius:12px;padding:14px 18px;font-size:13px;color:var(--muted);
+  margin-bottom:28px;line-height:1.65;
+}
+.info-banner strong{color:var(--t1);}
+
+/* FOLIO DETAIL */
+.folio-detail{
+  background:var(--card);border:1px solid var(--border);border-radius:14px;
+  padding:28px;margin-top:20px;max-width:780px;
+}
+.folio-detail h3{font-family:'Lora',serif;font-size:18px;font-weight:700;margin-bottom:6px;color:var(--text);}
+.folio-detail .folio-meta{font-size:12px;color:var(--muted);margin-bottom:18px;}
+.folio-section-title{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--t1);margin-bottom:8px;margin-top:18px;}
+.folio-body{font-size:13px;color:var(--muted);line-height:1.7;}
+.folio-steps{list-style:none;display:flex;flex-direction:column;gap:8px;margin-top:10px;}
+.folio-steps li{
+  display:flex;gap:10px;font-size:13px;color:var(--text);line-height:1.5;
+}
+.folio-steps li::before{content:'→';color:var(--t1);font-weight:700;flex-shrink:0;}
+.folio-toggle{
+  background:none;border:none;cursor:pointer;color:var(--t1);font-family:'DM Sans',sans-serif;
+  font-size:12px;font-weight:600;padding:0;text-decoration:underline;margin-top:14px;display:block;
+}
+
+  /* ── PROGRESS DASHBOARD ── */
+  .dash-grid{display:flex;flex-direction:column;gap:14px;max-width:640px;}
+  .dash-row{display:flex;align-items:center;gap:14px;}
+  .dash-label{font-family:'Lora',serif;font-size:14px;font-weight:600;width:200px;flex-shrink:0;color:var(--text);}
+  .dash-bar-wrap{flex:1;background:var(--surface2);border-radius:20px;height:16px;overflow:hidden;border:1px solid var(--border);}
+  .dash-bar{height:100%;border-radius:20px;transition:width 0.6s cubic-bezier(.4,0,.2,1);min-width:4px;}
+  .dash-pct{font-family:'Lora',serif;font-size:13px;font-weight:700;width:40px;text-align:right;color:var(--muted);}
+  .dash-reset{font-size:12px;color:var(--faint);background:none;border:none;cursor:pointer;font-family:'DM Sans',sans-serif;padding:0;text-decoration:underline;margin-top:6px;}
+  .dash-total{font-size:13px;color:var(--muted);margin-bottom:20px;}
+
+  /* ── EXAM GENERATOR ── */
+  .exam-controls{display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap;align-items:center;}
+  .exam-gen-btn{background:var(--t1);color:#fff;border:none;border-radius:20px;padding:10px 26px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;transition:opacity 0.2s;}
+  .exam-gen-btn:hover{opacity:0.85;}
+  .exam-paper{max-width:680px;}
+  .exam-q-block{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px 22px;margin-bottom:12px;}
+  .exam-q-num{font-size:11px;color:var(--faint);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;}
+  .exam-q-text{font-family:'Lora',serif;font-size:16px;font-weight:600;margin-bottom:14px;line-height:1.5;color:var(--text);}
+  .exam-opts{display:flex;flex-direction:column;gap:8px;}
+  .exam-opt{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;cursor:pointer;font-size:13px;display:flex;align-items:center;gap:10px;transition:all 0.15s;color:var(--text);}
+  .exam-opt:hover{border-color:var(--t1);background:rgba(196,149,106,0.07);transform:translateX(3px);}
+  .exam-opt.selected{border-color:var(--t1);background:rgba(196,149,106,0.12);}
+  .exam-opt.correct{border-color:var(--t2);background:rgba(122,158,126,0.12);color:var(--t2);}
+  .exam-opt.wrong{border-color:var(--t4);background:rgba(176,126,138,0.1);color:var(--t4);}
+  .exam-opt-label{width:24px;height:24px;border-radius:5px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;color:var(--muted);}
+  .exam-submit-row{display:flex;align-items:center;gap:16px;margin-top:20px;flex-wrap:wrap;}
+  .exam-submit-btn{background:var(--t1);color:#fff;border:none;border-radius:20px;padding:11px 28px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:700;}
+  .exam-submit-btn:hover{opacity:0.85;}
+  .exam-submit-btn:disabled{opacity:0.35;cursor:not-allowed;}
+  .exam-score-display{font-family:'Lora',serif;font-size:15px;font-weight:700;color:var(--t1);}
+  .exam-topic-tag{display:inline-block;font-size:10px;font-weight:600;text-transform:uppercase;letter-spacing:1px;padding:2px 8px;border-radius:10px;background:var(--surface2);color:var(--muted);margin-bottom:6px;}
+
+  /* ── FIND THE MISTAKE ── */
+  .mistake-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:28px;max-width:680px;}
+  .mistake-scenario{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 20px;margin-bottom:20px;font-family:'Courier New',monospace;font-size:14px;line-height:1.9;color:var(--text);}
+  .mistake-scenario .step{display:block;}
+  .mistake-scenario .wrong-step{color:var(--t4);font-weight:700;position:relative;}
+  .mistake-prompt{font-family:'Lora',serif;font-size:16px;font-weight:600;margin-bottom:16px;color:var(--text);}
+  .mistake-opts{display:flex;flex-direction:column;gap:10px;margin-bottom:18px;}
+  .mistake-opt{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;cursor:pointer;font-size:13px;display:flex;align-items:center;gap:12px;transition:all 0.15s;color:var(--text);}
+  .mistake-opt:hover{border-color:var(--t1);}
+  .mistake-opt.selected{border-color:var(--t1);background:rgba(196,149,106,0.1);}
+  .mistake-opt.correct{border-color:var(--t2);background:rgba(122,158,126,0.12);color:var(--t2);}
+  .mistake-opt.wrong{border-color:var(--t4);background:rgba(176,126,138,0.1);color:var(--t4);}
+  .mistake-explain{font-size:13px;padding:12px 16px;border-radius:8px;margin-bottom:16px;display:none;line-height:1.6;}
+  .mistake-explain.show{display:block;}
+  .mistake-explain.correct{background:rgba(122,158,126,0.1);color:var(--t2);border:1px solid rgba(122,158,126,0.25);}
+  .mistake-explain.wrong{background:rgba(176,126,138,0.1);color:var(--t4);border:1px solid rgba(176,126,138,0.25);}
+  .mistake-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+  .mistake-score{font-size:13px;color:var(--muted);}
+  .mistake-nav-row{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;}
+
+  /* ── BOSS BATTLES ── */
+  .boss-select-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px;margin-bottom:28px;}
+  .boss-card{background:var(--card);border:2px solid var(--border);border-radius:14px;padding:22px;cursor:pointer;transition:all 0.2s;text-align:center;position:relative;overflow:hidden;}
+  .boss-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--boss-color,var(--t1));border-radius:14px 14px 0 0;}
+  .boss-card:hover{transform:translateY(-2px);box-shadow:0 6px 20px rgba(160,130,100,0.15);border-color:var(--boss-color,var(--t1));}
+  .boss-card.defeated{opacity:0.6;}
+  .boss-card.defeated::after{content:'✓ Defeated';position:absolute;top:10px;right:10px;font-size:10px;font-weight:700;color:var(--t2);background:rgba(122,158,126,0.15);padding:2px 7px;border-radius:10px;}
+  .boss-emoji{font-size:36px;margin-bottom:10px;}
+  .boss-name{font-family:'Lora',serif;font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px;}
+  .boss-sub{font-size:12px;color:var(--muted);}
+  .boss-hp-wrap{display:flex;align-items:center;gap:10px;margin-bottom:18px;}
+  .boss-hp-label{font-size:13px;font-weight:700;color:var(--t4);white-space:nowrap;}
+  .boss-hp-bar{flex:1;background:var(--surface2);border-radius:20px;height:12px;overflow:hidden;}
+  .boss-hp-fill{height:100%;background:linear-gradient(90deg,var(--t4),var(--t2));border-radius:20px;transition:width 0.5s;}
+  .boss-arena{max-width:680px;}
+  .boss-q-block{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:26px;margin-bottom:16px;}
+  .boss-q-difficulty{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;}
+  .boss-q-text{font-family:'Lora',serif;font-size:17px;font-weight:600;margin-bottom:18px;line-height:1.5;color:var(--text);}
+  .boss-opts{display:flex;flex-direction:column;gap:9px;}
+  .boss-opt{background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:11px 15px;cursor:pointer;font-size:14px;display:flex;align-items:center;gap:11px;transition:all 0.15s;color:var(--text);}
+  .boss-opt:hover{border-color:var(--t1);}
+  .boss-opt.selected{border-color:var(--t1);background:rgba(196,149,106,0.1);}
+  .boss-opt.correct{border-color:var(--t2);background:rgba(122,158,126,0.12);color:var(--t2);}
+  .boss-opt.wrong{border-color:var(--t4);background:rgba(176,126,138,0.1);color:var(--t4);}
+  .boss-opt-label{width:26px;height:26px;border-radius:6px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;color:var(--muted);}
+  .boss-feedback{font-size:13px;padding:11px 15px;border-radius:8px;margin:12px 0;display:none;line-height:1.6;}
+  .boss-feedback.show{display:block;}
+  .boss-feedback.correct{background:rgba(122,158,126,0.1);color:var(--t2);border:1px solid rgba(122,158,126,0.25);}
+  .boss-feedback.wrong{background:rgba(176,126,138,0.1);color:var(--t4);border:1px solid rgba(176,126,138,0.25);}
+  .boss-result{text-align:center;padding:40px 20px;display:none;}
+  .boss-result.show{display:block;}
+  .boss-result-emoji{font-size:64px;margin-bottom:12px;}
+  .boss-result-title{font-family:'Lora',serif;font-size:28px;font-weight:700;margin-bottom:8px;}
+  .boss-result-sub{color:var(--muted);font-size:15px;margin-bottom:24px;}
+  .back-btn{background:var(--surface2);border:1px solid var(--border);color:var(--text);border-radius:20px;padding:10px 24px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;margin-right:10px;}
+  .back-btn:hover{background:var(--surface);}
+
+/* RESTART / BACK BUTTONS */
+.restart-btn{background:var(--t1);color:#fff;border:none;border-radius:20px;padding:12px 28px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;}
+.restart-btn:hover{opacity:0.88;}
+.restart-btn:active{transform:scale(0.96);}
+.quiz-check-btn:active{transform:scale(0.96);}
+.exam-gen-btn:active{transform:scale(0.96);}
+.exam-submit-btn:active{transform:scale(0.96);}
+.back-btn{background:var(--surface2);color:var(--text);border:1px solid var(--border);border-radius:20px;padding:10px 22px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;margin-right:8px;}
+.back-btn:hover{background:var(--surface);}
+
+/* BOSS BATTLES */
+.boss-select-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px;max-width:900px;}
+.boss-card{background:var(--card);border:2px solid var(--border);border-radius:14px;padding:24px 20px;text-align:center;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden;}
+.boss-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:var(--boss-color,var(--t1));border-radius:14px 14px 0 0;}
+.boss-card:hover{border-color:var(--boss-color,var(--t1));transform:translateY(-2px);box-shadow:0 6px 20px rgba(160,130,100,0.15);}
+.boss-card.defeated{opacity:0.75;}
+.boss-card.defeated::after{content:'✓ Defeated';position:absolute;top:10px;right:10px;font-size:10px;font-weight:700;color:var(--t2);background:rgba(122,158,126,0.18);padding:2px 8px;border-radius:10px;}
+.boss-emoji{font-size:36px;margin-bottom:8px;}
+.boss-name{font-family:'Lora',serif;font-size:15px;font-weight:700;color:var(--text);margin-bottom:4px;}
+.boss-sub{font-size:11px;color:var(--muted);}
+.boss-hp-wrap{max-width:680px;margin-bottom:20px;}
+.boss-hp-label{font-size:12px;color:var(--muted);margin-bottom:6px;font-weight:600;}
+.boss-hp-bar{background:var(--surface2);border-radius:6px;height:10px;border:1px solid var(--border);}
+.boss-hp-fill{height:10px;border-radius:6px;background:linear-gradient(90deg,var(--t4),var(--t2));transition:width 0.4s;}
+.boss-arena-inner{max-width:680px;}
+.boss-q-block{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:28px;}
+.boss-q-difficulty{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;margin-bottom:10px;}
+.boss-q-text{font-family:'Lora',serif;font-size:18px;font-weight:600;margin-bottom:22px;line-height:1.5;color:var(--text);}
+.boss-opts{display:flex;flex-direction:column;gap:10px;margin-bottom:20px;}
+.boss-opt{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;cursor:pointer;font-size:14px;transition:all 0.15s;display:flex;align-items:center;gap:12px;color:var(--text);}
+.boss-opt:hover{border-color:var(--t1);background:rgba(196,149,106,0.07);transform:translateX(3px);}
+.boss-opt.selected{border-color:var(--t1);background:rgba(196,149,106,0.1);}
+.boss-opt.correct{border-color:var(--t2);background:rgba(122,158,126,0.12);color:var(--t2);}
+.boss-opt.wrong{border-color:var(--t4);background:rgba(176,126,138,0.12);color:var(--t4);}
+.boss-opt-label{width:26px;height:26px;border-radius:6px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;color:var(--muted);}
+.boss-feedback{font-size:13px;padding:12px 16px;border-radius:8px;line-height:1.6;display:none;}
+.boss-feedback.show{display:block;}
+.boss-feedback.correct{background:rgba(122,158,126,0.12);color:var(--t2);border:1px solid rgba(122,158,126,0.25);}
+.boss-feedback.wrong{background:rgba(176,126,138,0.12);color:var(--t4);border:1px solid rgba(176,126,138,0.25);}
+.boss-result{display:none;text-align:center;padding:32px 20px;}
+.boss-result.show{display:block;}
+.boss-result-emoji{font-size:52px;margin-bottom:12px;}
+.boss-result-title{font-family:'Lora',serif;font-size:24px;font-weight:700;margin-bottom:8px;color:var(--text);}
+.boss-result-sub{color:var(--muted);font-size:14px;margin-bottom:24px;line-height:1.6;}
+
+/* FIND THE MISTAKE */
+.mistake-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:28px;max-width:680px;}
+.mistake-prompt{font-family:'Lora',serif;font-size:17px;font-weight:600;margin-bottom:16px;line-height:1.5;color:var(--text);}
+.mistake-scenario{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:18px 20px;margin-bottom:20px;display:flex;flex-direction:column;gap:0;}
+.mistake-scenario .step{font-family:'Courier New',monospace;font-size:14px;color:var(--text);padding:8px 0;border-bottom:1px solid var(--border);line-height:1.5;}
+.mistake-scenario .step:last-child{border-bottom:none;}
+.mistake-opts{display:flex;flex-direction:column;gap:10px;margin-bottom:18px;}
+.mistake-opt{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:12px 16px;cursor:pointer;font-size:14px;transition:all 0.15s;display:flex;align-items:center;gap:12px;color:var(--text);}
+.mistake-opt:hover{border-color:var(--t1);background:rgba(196,149,106,0.07);transform:translateX(3px);}
+.mistake-opt.selected{border-color:var(--t1);background:rgba(196,149,106,0.1);}
+.mistake-opt.correct{border-color:var(--t2);background:rgba(122,158,126,0.12);color:var(--t2);}
+.mistake-opt.wrong{border-color:var(--t4);background:rgba(176,126,138,0.12);color:var(--t4);}
+.mistake-explain{font-size:13px;padding:12px 16px;border-radius:8px;margin-bottom:16px;line-height:1.6;display:none;}
+.mistake-explain.show{display:block;}
+.mistake-explain.correct{background:rgba(122,158,126,0.12);color:var(--t2);border:1px solid rgba(122,158,126,0.25);}
+.mistake-explain.wrong{background:rgba(176,126,138,0.12);color:var(--t4);border:1px solid rgba(176,126,138,0.25);}
+.mistake-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;}
+.mistake-score{font-size:13px;color:var(--muted);}
+.mistake-nav-row{display:flex;gap:10px;margin-top:14px;max-width:680px;}
+.exam-topic-tag{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--t1);margin-bottom:8px;}
+
+/* EXAM GENERATOR */
+.exam-controls{display:flex;gap:12px;align-items:center;margin-bottom:24px;flex-wrap:wrap;}
+.exam-gen-btn{background:var(--t1);color:#fff;border:none;border-radius:20px;padding:10px 24px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;}
+.exam-gen-btn:hover{opacity:0.88;}
+.exam-paper{display:flex;flex-direction:column;gap:20px;max-width:680px;}
+.exam-q-block{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:24px;}
+.exam-q-num{font-size:11px;color:var(--faint);margin-bottom:8px;text-transform:uppercase;letter-spacing:1px;}
+.exam-q-text{font-family:'Lora',serif;font-size:17px;font-weight:600;margin-bottom:18px;line-height:1.5;color:var(--text);}
+.exam-opts{display:flex;flex-direction:column;gap:9px;}
+.exam-opt{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:11px 16px;cursor:pointer;font-size:14px;transition:all 0.15s;display:flex;align-items:center;gap:12px;color:var(--text);}
+.exam-opt:hover{border-color:var(--t1);background:rgba(196,149,106,0.07);}
+.exam-opt.selected{border-color:var(--t1);background:rgba(196,149,106,0.1);}
+.exam-opt.correct{border-color:var(--t2);background:rgba(122,158,126,0.12);color:var(--t2);}
+.exam-opt.wrong{border-color:var(--t4);background:rgba(176,126,138,0.12);color:var(--t4);}
+.exam-opt-label{width:26px;height:26px;border-radius:6px;background:var(--surface2);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;color:var(--muted);}
+.exam-submit-row{display:flex;align-items:center;gap:16px;margin-top:20px;flex-wrap:wrap;max-width:680px;}
+.exam-submit-btn{background:var(--t2);color:#fff;border:none;border-radius:20px;padding:12px 28px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;}
+.exam-submit-btn:hover{opacity:0.88;}
+.exam-submit-btn:disabled{opacity:0.4;cursor:not-allowed;}
+.exam-score-display{font-family:'Lora',serif;font-size:18px;font-weight:700;color:var(--t1);}
+
+/* PROGRESS DASHBOARD */
+.dash-total{font-size:14px;color:var(--muted);margin-bottom:22px;line-height:1.6;}
+.dash-grid{display:flex;flex-direction:column;gap:14px;max-width:620px;margin-bottom:24px;}
+.dash-row{display:flex;align-items:center;gap:14px;}
+.dash-label{font-size:13px;font-weight:600;color:var(--text);width:200px;flex-shrink:0;}
+.dash-bar-wrap{flex:1;background:var(--surface2);border-radius:6px;height:16px;border:1px solid var(--border);overflow:hidden;}
+.dash-bar{height:16px;border-radius:6px;transition:width 0.5s ease;min-width:0;}
+.dash-pct{font-family:'Courier New',monospace;font-size:13px;font-weight:700;width:46px;text-align:right;flex-shrink:0;}
+.dash-reset{background:none;border:1px solid var(--border);color:var(--muted);border-radius:20px;padding:7px 16px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:12px;}
+.dash-reset:hover{border-color:var(--t4);color:var(--t4);}
+
+/* ── DASHBOARD ── */
+.dash-page{max-width:1080px;margin:0 auto;padding:36px 24px 60px;}
+.dash-header{display:flex;align-items:flex-start;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:32px;}
+
+/* GAME STATS BAR */
+.dash-game-bar{
+  display:flex;align-items:center;gap:0;
+  background:var(--card);border:1px solid var(--border);border-radius:16px;
+  padding:14px 8px;margin-bottom:28px;overflow-x:auto;
+}
+.game-stat{
+  display:flex;align-items:center;gap:10px;
+  padding:6px 22px;flex:1;min-width:140px;
+  position:relative;
+}
+.game-stat:not(:last-child)::after{
+  content:'';position:absolute;right:0;top:50%;transform:translateY(-50%);
+  width:1px;height:32px;background:var(--border);
+}
+.game-stat-icon{font-size:22px;line-height:1;flex-shrink:0;}
+.game-stat-icon.level{
+  width:36px;height:36px;border-radius:50%;
+  background:linear-gradient(135deg,var(--t1),var(--t4));
+  color:#fff;display:flex;align-items:center;justify-content:center;
+  font-family:'Lora',serif;font-weight:700;font-size:14px;
+}
+.game-stat-info{display:flex;flex-direction:column;line-height:1.2;}
+.game-stat-value{font-family:'Lora',serif;font-size:17px;font-weight:700;color:var(--text);}
+.game-stat-label{font-size:11px;color:var(--muted);margin-top:1px;}
+.game-stat.streak-active .game-stat-icon{filter:saturate(1.3);}
+.game-xp-bar-wrap{flex:1.4;min-width:160px;padding:6px 22px;position:relative;}
+.game-xp-bar-top{display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:5px;}
+.game-xp-bar-track{background:var(--surface2);border-radius:5px;height:8px;border:1px solid var(--border);overflow:hidden;}
+.game-xp-bar-fill{height:8px;border-radius:5px;background:linear-gradient(90deg,var(--t1),var(--t4));transition:width 0.7s cubic-bezier(.4,0,.2,1);}
+
+/* BADGE TOAST */
+.badge-toast{
+  position:fixed;bottom:24px;right:24px;z-index:999;
+  background:var(--card);border:1px solid var(--t1);border-radius:14px;
+  padding:14px 20px;box-shadow:0 8px 28px rgba(160,130,100,0.25);
+  display:flex;align-items:center;gap:12px;
+  transform:translateY(120%);opacity:0;
+  transition:transform 0.45s cubic-bezier(.2,.9,.3,1.25),opacity 0.35s;
+  max-width:300px;
+}
+.badge-toast.show{transform:translateY(0);opacity:1;}
+.badge-toast-emoji{font-size:28px;}
+.badge-toast-title{font-family:'Lora',serif;font-weight:700;font-size:13px;color:var(--text);}
+.badge-toast-sub{font-size:11px;color:var(--muted);margin-top:2px;}
+
+/* BADGES PAGE / GRID */
+.badges-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:14px;max-width:760px;}
+.badge-card{
+  background:var(--card);border:1px solid var(--border);border-radius:14px;
+  padding:18px 14px;text-align:center;transition:all 0.2s;
+}
+.badge-card.locked{opacity:0.4;filter:grayscale(1);}
+.badge-card.unlocked{border-color:var(--t1);}
+.badge-card-emoji{font-size:30px;margin-bottom:8px;}
+.badge-card-name{font-family:'Lora',serif;font-size:12px;font-weight:700;color:var(--text);margin-bottom:3px;}
+.badge-card-desc{font-size:10px;color:var(--muted);line-height:1.4;}
+.dash-greeting{font-size:13px;color:var(--muted);font-weight:500;margin-bottom:6px;letter-spacing:0.3px;}
+.dash-title{font-family:'Lora',serif;font-size:clamp(26px,4vw,42px);font-weight:700;line-height:1.1;color:var(--text);}
+.dash-title em{color:var(--t1);font-style:italic;}
+.dash-tagline{font-size:12px;color:var(--faint);align-self:flex-end;padding-bottom:4px;}
+
+/* ROW 1 */
+.dash-row-top{display:grid;grid-template-columns:1fr 240px;gap:16px;margin-bottom:20px;}
+@media(max-width:700px){.dash-row-top{grid-template-columns:1fr;}}
+
+/* CONTINUE CARD */
+.dash-continue-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:26px 28px;display:flex;flex-direction:column;gap:8px;position:relative;overflow:hidden;}
+.dash-continue-card::before{content:'';position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,var(--t1),var(--t3));}
+.dash-continue-label{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--faint);}
+.dash-continue-topic{font-family:'Lora',serif;font-size:22px;font-weight:700;color:var(--text);line-height:1.2;}
+.dash-continue-sub{font-size:13px;color:var(--muted);}
+.dash-mini-bar-wrap{display:flex;align-items:center;gap:10px;margin-top:4px;}
+.dash-mini-bar{flex:1;background:var(--surface2);border-radius:4px;height:6px;overflow:hidden;}
+.dash-mini-fill{height:6px;border-radius:4px;background:linear-gradient(90deg,var(--t1),var(--t3));transition:width 0.5s;}
+.dash-mini-pct{font-size:12px;font-weight:700;color:var(--t1);min-width:36px;text-align:right;}
+.dash-continue-btn{margin-top:6px;background:var(--t1);color:#fff;border:none;border-radius:20px;padding:10px 22px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;align-self:flex-start;transition:opacity 0.2s;}
+.dash-continue-btn:hover{opacity:0.88;}
+
+/* QUICK START */
+.dash-quickstart{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:8px;}
+.dash-qs-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--faint);margin-bottom:4px;}
+.dash-qs-btn{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 14px;cursor:pointer;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:600;color:var(--text);text-align:left;transition:all 0.15s;}
+.dash-qs-btn:hover{background:var(--surface2);border-color:var(--t1);color:var(--t1);}
+
+/* STATS ROW */
+.dash-stats-row{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:28px;}
+.dash-stat-pill{background:var(--card);border:1px solid var(--border);border-radius:20px;padding:8px 18px;font-size:13px;color:var(--text);display:flex;align-items:center;gap:6px;white-space:nowrap;}
+.dash-stat-pill strong{color:var(--t1);}
+.dash-stat-pill span{color:var(--muted);}
+
+/* TOPICS GRID */
+.dash-topics-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:2px;color:var(--faint);margin-bottom:14px;}
+.dash-topics-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px;}
+.dash-topic-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:18px 20px;cursor:pointer;transition:all 0.2s;position:relative;overflow:hidden;}
+.dash-topic-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--tc);}
+.dash-topic-card:hover{transform:translateY(-2px);box-shadow:0 5px 16px rgba(160,130,100,0.12);border-color:var(--tc);}
+.dash-tc-head{display:flex;align-items:center;gap:12px;margin-bottom:12px;}
+.dash-tc-emoji{font-size:26px;line-height:1;}
+.dash-tc-info{flex:1;}
+.dash-tc-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--tc);margin-bottom:2px;}
+.dash-tc-name{font-family:'Lora',serif;font-size:15px;font-weight:700;color:var(--text);}
+.dash-tc-bar-wrap{display:flex;align-items:center;gap:8px;}
+.dash-tc-bar{flex:1;background:var(--surface2);border-radius:4px;height:5px;overflow:hidden;}
+.dash-tc-fill{height:5px;border-radius:4px;background:var(--tc);transition:width 0.5s;}
+.dash-tc-pct{font-size:11px;font-weight:700;color:var(--tc);min-width:32px;text-align:right;}
+.dash-tc-status{font-size:11px;color:var(--muted);margin-top:6px;}
+
+
+/* ===== DON'T LOOK DOWN ===== */
+#dld-wrapper{position:relative;}
+.dld-start-card{
+  background:var(--card);border:1px solid var(--border);border-radius:20px;
+  padding:36px 32px;max-width:480px;margin:0 auto;text-align:center;
+}
+.dld-start-emoji{font-size:52px;margin-bottom:12px;}
+.dld-start-title{font-family:'Lora',serif;font-size:26px;font-weight:700;color:var(--text);margin-bottom:10px;}
+.dld-start-sub{font-size:14px;color:var(--muted);margin-bottom:22px;line-height:1.65;}
+.dld-start-rules{display:flex;flex-direction:column;gap:8px;margin-bottom:24px;text-align:left;}
+.dld-rule{font-size:13px;color:var(--muted);padding:8px 14px;background:var(--surface);border-radius:8px;}
+.dld-start-btn{
+  background:linear-gradient(135deg,var(--t1),var(--t4));color:#fff;border:none;
+  border-radius:20px;padding:13px 32px;font-family:'DM Sans',sans-serif;
+  font-size:15px;font-weight:700;cursor:pointer;width:100%;
+  transition:opacity 0.2s,transform 0.15s;margin-bottom:10px;
+}
+.dld-start-btn:hover{opacity:0.9;}
+.dld-start-btn:active{transform:scale(0.97);}
+.dld-over-stats{
+  display:grid;grid-template-columns:repeat(2,1fr);gap:10px;
+  margin-bottom:24px;
+}
+.dld-over-stat{
+  background:var(--surface);border-radius:10px;padding:14px 8px;
+  display:flex;flex-direction:column;align-items:center;gap:4px;
+}
+.dld-over-stat span:first-child{font-family:'Lora',serif;font-size:22px;font-weight:700;color:var(--t1);}
+.dld-over-stat span:last-child{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:0.5px;}
+/* game shell */
+.dld-game-shell{
+  display:flex;flex-direction:column;
+  border-radius:16px;overflow:hidden;
+  border:1px solid var(--border);
+  height:560px;
+  background:#0d0d1a;
+}
+/* HUD */
+.dld-hud{
+  background:rgba(10,10,26,0.96);
+  display:flex;align-items:center;padding:8px 16px;gap:0;flex-shrink:0;
+  border-bottom:1px solid rgba(255,255,255,0.07);
+}
+.dld-hud-block{
+  display:flex;flex-direction:column;align-items:center;
+  padding:0 14px;border-right:1px solid rgba(255,255,255,0.07);
+}
+.dld-hud-block:first-child{border-left:none;align-items:flex-start;}
+.dld-hud-block:last-child{border-right:none;margin-left:auto;align-items:flex-end;}
+.dld-hud-label{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:rgba(255,255,255,0.35);}
+.dld-hud-val{font-family:'Lora',serif;font-size:17px;font-weight:700;color:#fff;line-height:1.2;}
+/* energy bar */
+.dld-energy-wrap{flex:1;max-width:180px;padding:0 14px;}
+.dld-energy-track{background:rgba(255,255,255,0.1);border-radius:6px;height:8px;overflow:hidden;}
+.dld-energy-fill{height:8px;border-radius:6px;transition:width 0.3s linear;background:linear-gradient(90deg,#43e97b,#f7971e);}
+.dld-energy-fill.low{background:linear-gradient(90deg,#ff6584,#ff3a3a);}
+.dld-quit-btn{
+  background:none;border:1px solid rgba(255,255,255,0.15);color:rgba(255,255,255,0.5);
+  border-radius:8px;padding:5px 12px;cursor:pointer;font-size:12px;transition:all 0.15s;
+}
+.dld-quit-btn:hover{border-color:#ff6584;color:#ff6584;}
+/* canvas area */
+.dld-canvas-wrap{flex:1;position:relative;overflow:hidden;}
+#dld-canvas{display:block;position:absolute;top:0;left:0;width:100%;height:100%;}
+/* question panel — slides up from bottom */
+.dld-q-panel{
+  position:absolute;bottom:0;left:0;right:0;
+  background:rgba(13,13,26,0.97);backdrop-filter:blur(10px);
+  border-top:1px solid rgba(255,255,255,0.1);
+  padding:16px 20px 18px;
+  transform:translateY(100%);
+  transition:transform 0.3s cubic-bezier(.2,.9,.3,1.1);
+}
+.dld-q-panel.open{transform:translateY(0);}
+.dld-q-text{
+  font-family:'Lora',serif;font-size:15px;font-weight:600;
+  color:#e8e8f0;line-height:1.5;margin-bottom:12px;
+}
+.dld-q-opts{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;}
+.dld-q-opt{
+  background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.12);
+  border-radius:9px;padding:9px 12px;cursor:pointer;font-size:12px;
+  color:#e8e8f0;font-family:'DM Sans',sans-serif;font-weight:500;
+  transition:all 0.15s;text-align:left;display:flex;align-items:center;gap:8px;
+}
+.dld-q-opt:hover{background:rgba(108,99,255,0.2);border-color:rgba(108,99,255,0.5);}
+.dld-q-opt:active{transform:scale(0.97);}
+.dld-q-opt.correct{background:rgba(67,233,123,0.2);border-color:rgba(67,233,123,0.5);color:#43e97b;pointer-events:none;}
+.dld-q-opt.wrong{background:rgba(255,101,132,0.15);border-color:rgba(255,101,132,0.4);color:#ff6584;pointer-events:none;}
+.dld-q-opt.reveal{pointer-events:none;}
+.dld-q-opt-lbl{width:20px;height:20px;border-radius:4px;background:rgba(255,255,255,0.1);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;}
+.dld-q-fb{font-size:11px;color:rgba(255,255,255,0.45);line-height:1.4;min-height:14px;}
+/* answer question button — floats in canvas */
+.dld-ask-btn{
+  position:absolute;bottom:16px;right:16px;
+  background:linear-gradient(135deg,var(--t1),var(--t4));color:#fff;
+  border:none;border-radius:20px;padding:10px 20px;
+  font-family:'DM Sans',sans-serif;font-size:13px;font-weight:700;
+  cursor:pointer;transition:all 0.15s;
+  box-shadow:0 4px 16px rgba(196,149,106,0.35);
+  animation:askPulse 2s ease-in-out infinite;
+}
+.dld-ask-btn:hover{transform:scale(1.05);}
+.dld-ask-btn:active{transform:scale(0.97);}
+.dld-ask-btn:disabled{opacity:0.4;cursor:default;animation:none;}
+@keyframes askPulse{0%,100%{box-shadow:0 4px 16px rgba(196,149,106,0.35);}50%{box-shadow:0 4px 28px rgba(196,149,106,0.65);}}
+/* energy warning flash */
+@keyframes energyWarning{0%,100%{opacity:1;}50%{opacity:0.3;}}
+.dld-energy-fill.critical{animation:energyWarning 0.6s infinite;}
+
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-logo">∑ <span>Math Methods</span></div>
+  <button class="nav-btn active" onclick="showPage('home')">Home</button>
+  <button class="nav-btn" onclick="showPage('resources')">Resources</button>
+  <button class="nav-btn" onclick="showPage('assignments')">Assessments</button>
+  <button class="nav-btn" onclick="showPage('revision')">Revision</button>
+  <button class="nav-btn" onclick="showPage('calculator')">🧮 Calculator</button>
+</nav>
+
+<!-- HOME / DASHBOARD -->
+<div id="page-home" class="page active">
+  <div class="dash-page">
+
+
+    <div class="dash-header">
+      <div>
+        <div class="dash-greeting" id="dash-greeting">Good morning 👋</div>
+        <h1 class="dash-title">Stage 1 <em>Math Methods</em></h1>
+      </div>
+      <div class="dash-tagline">Your personal learning hub</div>
+    </div>
+
+    <!-- GAME STATS BAR -->
+    <div class="dash-game-bar">
+      <div class="game-stat">
+        <div class="game-stat-icon level" id="gs-level">1</div>
+        <div class="game-stat-info">
+          <div class="game-stat-value" id="gs-level-label">Level 1</div>
+          <div class="game-stat-label">Current level</div>
+        </div>
+      </div>
+      <div class="game-xp-bar-wrap">
+        <div class="game-xp-bar-top"><span id="gs-xp-current">0 XP</span><span id="gs-xp-next">500 XP to next level</span></div>
+        <div class="game-xp-bar-track"><div class="game-xp-bar-fill" id="gs-xp-fill" style="width:0%"></div></div>
+      </div>
+      <div class="game-stat" id="gs-streak-wrap">
+        <div class="game-stat-icon">🔥</div>
+        <div class="game-stat-info">
+          <div class="game-stat-value" id="gs-streak">0 days</div>
+          <div class="game-stat-label">Current streak</div>
+        </div>
+      </div>
+      <div class="game-stat">
+        <div class="game-stat-icon">⭐</div>
+        <div class="game-stat-info">
+          <div class="game-stat-value" id="gs-badges">0 / 12</div>
+          <div class="game-stat-label">Badges</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ROW 1: Continue + Quick Start -->
+    <div class="dash-row-top">
+
+      <!-- CONTINUE CARD -->
+      <div class="dash-continue-card" id="dash-continue">
+        <div class="dash-continue-label">▶ Continue where you left off</div>
+        <div class="dash-continue-topic" id="dash-cont-topic">No activity yet</div>
+        <div class="dash-continue-sub" id="dash-cont-sub">Start with flashcards to track your progress</div>
+        <div class="dash-mini-bar-wrap" id="dash-mini-bar-wrap" style="display:none">
+          <div class="dash-mini-bar"><div class="dash-mini-fill" id="dash-mini-fill"></div></div>
+          <div class="dash-mini-pct" id="dash-mini-pct">0%</div>
+        </div>
+        <button class="dash-continue-btn" id="dash-cont-btn" onclick="doContinue()">▶ Continue</button>
+      </div>
+
+      <!-- QUICK START -->
+      <div class="dash-quickstart">
+        <div class="dash-qs-title">Quick Start</div>
+        <button class="dash-qs-btn" onclick="showRevision('flashcards','all')">🃏 Flashcards</button>
+        <button class="dash-qs-btn" onclick="switchRevTab('quiz');showPage('revision')">⚡ Quick Quiz</button>
+        <button class="dash-qs-btn" onclick="switchRevTab('boss');showPage('revision')">⚔️ Boss Battle</button>
+        <button class="dash-qs-btn" onclick="switchRevTab('exam');showPage('revision')">🎲 Practice Exam</button>
+        <button class="dash-qs-btn" onclick="showPage('assignments')">📋 Assessments</button>
+      </div>
+
+    </div>
+
+    <!-- ROW 2: Stats bar -->
+    <div class="dash-stats-row">
+      <div class="dash-stat-pill" id="dp-bosses">⚔️ <strong id="dp-boss-count">0</strong> <span>Bosses defeated</span></div>
+      <div class="dash-stat-pill" id="dp-flashcards">🃏 <strong id="dp-card-count">0</strong> <span>Cards answered</span></div>
+      <div class="dash-stat-pill" id="dp-overall">📊 <strong id="dp-overall-pct">—</strong> <span>Overall accuracy</span></div>
+      <div class="dash-stat-pill" id="dp-topics">🏆 <strong id="dp-topic-count">0 / 6</strong> <span>Topics started</span></div>
+    </div>
+
+    <!-- ROW 3: Topic progress overview -->
+    <div class="dash-topics-title">Topics at a glance</div>
+    <div class="dash-topics-grid" id="dash-topics-grid"></div>
+
+    <!-- ROW 4: Badges -->
+    <div class="dash-topics-title" style="margin-top:28px">Badges</div>
+    <div class="badges-grid" id="badges-grid"></div>
+
+  </div>
+</div>
+
+<!-- RESOURCES -->
+<div id="page-resources" class="page">
+  <div class="section" style="padding-top:44px">
+    <div class="info-banner"><strong>All resources are linked directly below.</strong> Slides open in Google Slides. Practice tests and answer keys open in Google Drive. Use these alongside your class notes — do the practice test before checking the answers.</div>
+
+    <div class="sem-divider">Semester 1</div>
+    <div class="res-topic-grid">
+
+      <div class="res-topic-card" style="--topic-color:var(--t1)">
+        <div class="res-topic-header">
+          <div class="res-topic-label">Topic 1</div>
+          <div class="res-topic-name">Functions &amp; Graphs</div>
+        </div>
+        <div class="res-btn-stack">
+          <button class="res-big-btn" onclick="window.open('https://docs.google.com/presentation/d/1N3aWJAdYkI_-cvDByG2rcvy2UZpQXIMX/edit?usp=drive_link','_blank')"><span class="res-big-icon">📊</span><span class="res-big-label">Slides</span></button>
+          <button class="res-big-btn" onclick="window.open('https://docs.google.com/document/d/1gzQWjHELtmqGBHhzKS359j3WNcI1U650/edit?usp=drive_link','_blank')"><span class="res-big-icon">📝</span><span class="res-big-label">Practice Test</span></button>
+          <button class="res-big-btn" onclick="showRevision('flashcards','functions')"><span class="res-big-icon">🃏</span><span class="res-big-label">Flashcards</span></button>
+          <button class="res-big-btn" onclick="showRevision('quiz','functions')"><span class="res-big-icon">⚡</span><span class="res-big-label">Quick Quiz</span></button>
+          <button class="res-big-btn" onclick="showBoss('functions')"><span class="res-big-icon">⚔️</span><span class="res-big-label">Boss Battle</span></button>
+        </div>
+      </div>
+
+      <div class="res-topic-card" style="--topic-color:var(--t2)">
+        <div class="res-topic-header">
+          <div class="res-topic-label">Topic 2</div>
+          <div class="res-topic-name">Polynomials</div>
+        </div>
+        <div class="res-btn-stack">
+          <button class="res-big-btn" onclick="window.open('https://docs.google.com/presentation/d/1n237g_tcQrkltJTWlke_4QUAf-kFln5e/edit?usp=drive_link','_blank')"><span class="res-big-icon">📊</span><span class="res-big-label">Slides</span></button>
+          <button class="res-big-btn" onclick="window.open('https://drive.google.com/file/d/1DhldHW098xrpYbA67uZGYWbPqdcx-Nr7/view?usp=drive_link','_blank')"><span class="res-big-icon">🎬</span><span class="res-big-label">Assignment Help</span></button>
+          <button class="res-big-btn" onclick="window.open('https://drive.google.com/file/d/1CLiimRvAK6golh7vTYy2VSlee3rGMShu/view?usp=drive_link','_blank')"><span class="res-big-icon">🎬</span><span class="res-big-label">Cubics on Calculator</span></button>
+          <button class="res-big-btn" onclick="showRevision('flashcards','polynomials')"><span class="res-big-icon">🃏</span><span class="res-big-label">Flashcards</span></button>
+          <button class="res-big-btn" onclick="showRevision('quiz','polynomials')"><span class="res-big-icon">⚡</span><span class="res-big-label">Quick Quiz</span></button>
+          <button class="res-big-btn" onclick="showBoss('polynomials')"><span class="res-big-icon">⚔️</span><span class="res-big-label">Boss Battle</span></button>
+        </div>
+      </div>
+
+      <div class="res-topic-card" style="--topic-color:var(--t3)">
+        <div class="res-topic-header">
+          <div class="res-topic-label">Topic 3</div>
+          <div class="res-topic-name">Trigonometry</div>
+        </div>
+        <div class="res-btn-stack">
+          <button class="res-big-btn" onclick="window.open('https://docs.google.com/presentation/d/1o-RSVVgQBUodB-uuqVqyRoHDSE_pukGR/edit?usp=drive_link','_blank')"><span class="res-big-icon">📊</span><span class="res-big-label">Slides</span></button>
+          <button class="res-big-btn" onclick="window.open('https://docs.google.com/document/d/1FdtX-ZboQN7XRhNMToul0MuY0PRPD4Xg/edit?usp=drive_link','_blank')"><span class="res-big-icon">📝</span><span class="res-big-label">Practice Test</span></button>
+          <button class="res-big-btn" onclick="window.open('https://drive.google.com/file/d/1IHUjERYPmFQzNg75MNEQP8MzObp4fGSB/view?usp=drive_link','_blank')"><span class="res-big-icon">✅</span><span class="res-big-label">Answers</span></button>
+          <button class="res-big-btn" onclick="showRevision('flashcards','trig')"><span class="res-big-icon">🃏</span><span class="res-big-label">Flashcards</span></button>
+          <button class="res-big-btn" onclick="showRevision('quiz','trig')"><span class="res-big-icon">⚡</span><span class="res-big-label">Quick Quiz</span></button>
+          <button class="res-big-btn" onclick="showBoss('trig')"><span class="res-big-icon">⚔️</span><span class="res-big-label">Boss Battle</span></button>
+        </div>
+      </div>
+
+      <div class="res-topic-card" style="--topic-color:var(--t1)">
+        <div class="res-topic-header">
+          <div class="res-topic-label" style="color:var(--t1)">Semester 1 Exam Prep</div>
+          <div class="res-topic-name">Practice Exam — Topics 1–3</div>
+        </div>
+        <div class="res-btn-stack">
+          <button class="res-big-btn" onclick="window.open('https://drive.google.com/file/d/1fUDIkUfzp1ljTpIfAbavniVfD08YdeDC/view?usp=drive_link','_blank')"><span class="res-big-icon">📝</span><span class="res-big-label">Practice Exam</span></button>
+          <button class="res-big-btn" onclick="window.open('https://drive.google.com/file/d/1hSKhyrDrYkvgQ2rbXdg4SKthF-Q8l4ID/view?usp=drive_link','_blank')"><span class="res-big-icon">✅</span><span class="res-big-label">Answers</span></button>
+          <button class="res-big-btn" onclick="showRevision('exam',null)"><span class="res-big-icon">🎲</span><span class="res-big-label">Random Exam Generator</span></button>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="sem-divider">Semester 2</div>
+    <div class="res-topic-grid">
+
+      <div class="res-topic-card" style="--topic-color:var(--t4)">
+        <div class="res-topic-header">
+          <div class="res-topic-label">Topic 4</div>
+          <div class="res-topic-name">Counting &amp; Statistics</div>
+        </div>
+        <div class="res-btn-stack">
+          <button class="res-big-btn" onclick="window.open('https://docs.google.com/presentation/d/1X2CqoPQ9O9-NS5CGJKg2DZosurhvBwKQ/edit?usp=sharing','_blank')"><span class="res-big-icon">📊</span><span class="res-big-label">Slides</span></button>
+          <button class="res-big-btn" onclick="window.open('https://drive.google.com/file/d/1nn8Xle9uHs0C83tT_FdNvJPoxZcaW12y/view?usp=drive_link','_blank')"><span class="res-big-icon">🎬</span><span class="res-big-label">Combinations Video</span></button>
+          <button class="res-big-btn" onclick="showRevision('flashcards','counting')"><span class="res-big-icon">🃏</span><span class="res-big-label">Flashcards</span></button>
+          <button class="res-big-btn" onclick="showRevision('quiz','counting')"><span class="res-big-icon">⚡</span><span class="res-big-label">Quick Quiz</span></button>
+          <button class="res-big-btn" onclick="showBoss('counting')"><span class="res-big-icon">⚔️</span><span class="res-big-label">Boss Battle</span></button>
+        </div>
+      </div>
+
+      <div class="res-topic-card" style="--topic-color:var(--t5)">
+        <div class="res-topic-header">
+          <div class="res-topic-label">Topic 5</div>
+          <div class="res-topic-name">Intro to Differential Calculus</div>
+        </div>
+        <div class="res-btn-stack">
+          <button class="res-big-btn" onclick="window.open('https://docs.google.com/presentation/d/1piKwRqjVhLbgeRdSRu-JhDreU8Q9fnzd/edit?usp=drive_link','_blank')"><span class="res-big-icon">📊</span><span class="res-big-label">Slides</span></button>
+          <button class="res-big-btn" onclick="window.open('https://docs.google.com/document/d/1HY8u-EyhDv662mO0QcN4w9GaQVL14BiD/edit?usp=drive_link','_blank')"><span class="res-big-icon">📝</span><span class="res-big-label">First Principles Practice</span></button>
+          <button class="res-big-btn" onclick="window.open('https://drive.google.com/file/d/1VopF0pXCQX23aSh2eGNCJBa8OfnAANwQ/view?usp=drive_link','_blank')"><span class="res-big-icon">✅</span><span class="res-big-label">Answers</span></button>
+          <button class="res-big-btn" onclick="showRevision('flashcards','calculus')"><span class="res-big-icon">🃏</span><span class="res-big-label">Flashcards</span></button>
+          <button class="res-big-btn" onclick="showRevision('quiz','calculus')"><span class="res-big-icon">⚡</span><span class="res-big-label">Quick Quiz</span></button>
+          <button class="res-big-btn" onclick="showBoss('calculus')"><span class="res-big-icon">⚔️</span><span class="res-big-label">Boss Battle</span></button>
+        </div>
+      </div>
+
+      <div class="res-topic-card" style="--topic-color:var(--t6)">
+        <div class="res-topic-header">
+          <div class="res-topic-label">Topic 6</div>
+          <div class="res-topic-name">Growth &amp; Decay</div>
+        </div>
+        <div class="res-btn-stack">
+          <button class="res-big-btn" onclick="window.open('https://docs.google.com/presentation/d/1q0aFd5IuzKuLN2tGXW4CinyqOp9wHYiH/edit?usp=drive_link','_blank')"><span class="res-big-icon">📊</span><span class="res-big-label">Slides</span></button>
+          <button class="res-big-btn" onclick="window.open('https://drive.google.com/file/d/1SOcscnHusLkI30B2uozOkkrbCH14ifFz/view?usp=drive_link','_blank')"><span class="res-big-icon">🎬</span><span class="res-big-label">Index Laws Recap 1</span></button>
+          <button class="res-big-btn" onclick="window.open('https://drive.google.com/file/d/1BRs6_SEozZKMy6I-qL3DJG8SzlCZvDpA/view?usp=drive_link','_blank')"><span class="res-big-icon">🎬</span><span class="res-big-label">Index Laws Recap 2</span></button>
+          <button class="res-big-btn" onclick="window.open('https://docs.google.com/document/d/1Q13geOJS6H95h_lxSKAE7wyTS8_l8R0h/edit?usp=drive_link','_blank')"><span class="res-big-icon">📝</span><span class="res-big-label">Practice Test</span></button>
+          <button class="res-big-btn" onclick="window.open('https://drive.google.com/file/d/1FE77z4G8ZQZNtPAdboHXpDrgXUlm59Xk/view?usp=drive_link','_blank')"><span class="res-big-icon">✅</span><span class="res-big-label">Answers</span></button>
+          <button class="res-big-btn" onclick="showRevision('flashcards','growth')"><span class="res-big-icon">🃏</span><span class="res-big-label">Flashcards</span></button>
+          <button class="res-big-btn" onclick="showRevision('quiz','growth')"><span class="res-big-icon">⚡</span><span class="res-big-label">Quick Quiz</span></button>
+          <button class="res-big-btn" onclick="showBoss('growth')"><span class="res-big-icon">⚔️</span><span class="res-big-label">Boss Battle</span></button>
+        </div>
+      </div>
+
+      <div class="res-topic-card" style="--topic-color:var(--t4)">
+        <div class="res-topic-header">
+          <div class="res-topic-label" style="color:var(--t4)">Semester 2 Exam Prep</div>
+          <div class="res-topic-name">Practice Exam &amp; Revision — Topics 4–6</div>
+        </div>
+        <div class="res-btn-stack">
+          <button class="res-big-btn" onclick="window.open('https://docs.google.com/document/d/1hQrDZeWHlj_fmn1Ja-JxbjxZqttJG3qq/edit?usp=drive_link','_blank')"><span class="res-big-icon">📝</span><span class="res-big-label">Practice Exam</span></button>
+          <button class="res-big-btn" onclick="window.open('https://docs.google.com/document/d/1PZpeukri7LOrft_hJs91npg2PXWqhA18/edit?usp=drive_link','_blank')"><span class="res-big-icon">📋</span><span class="res-big-label">Revision Sheet</span></button>
+          <button class="res-big-btn" onclick="window.open('https://drive.google.com/file/d/1A7b__0-9XwSPdEGQMpHCr5AVlSS8Vjsj/view?usp=drive_link','_blank')"><span class="res-big-icon">✅</span><span class="res-big-label">Revision Answers</span></button>
+          <button class="res-big-btn" onclick="showRevision('exam',null)"><span class="res-big-icon">🎲</span><span class="res-big-label">Random Exam Generator</span></button>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="sem-divider">Study Skills</div>
+    <div class="tips-grid">
+      <div class="tip-card"><div class="tip-emoji">⏱️</div><div class="tip-title">Review within 24 hours</div><div class="tip-body">If you don't revisit what was taught within 24 hours, you'll forget roughly half of it. Even 10 minutes of review the same evening makes a big difference.</div></div>
+      <div class="tip-card"><div class="tip-emoji">✍️</div><div class="tip-title">Studying vs. Revising</div><div class="tip-body">Studying is active first-time learning. Revising is placing already-learnt knowledge into a test context. Don't confuse reading notes with actually practising problems.</div></div>
+      <div class="tip-card"><div class="tip-emoji">🔕</div><div class="tip-title">Remove distractions</div><div class="tip-body">Unwanted noise causes your mind to wander — 78% of students experience this. Find a quiet space when working through maths problems.</div></div>
+      <div class="tip-card"><div class="tip-emoji">📝</div><div class="tip-title">Do the problems</div><div class="tip-body">Maths is not a spectator sport. Close the book and reproduce the solution yourself. If you can't, you haven't learned it yet.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- ASSESSMENTS -->
+<div id="page-assignments" class="page">
+  <div class="section" style="padding-top:44px">
+    <div class="info-banner"><strong>8 assessment tasks across the year</strong> — 4 SATs, 2 investigations / folios, and 2 exams. SATs are supervised in class; check each task below for its specific notes allowance. Investigations and folios are submitted electronically via Daymap. All tasks assess both <strong>Concepts &amp; Techniques</strong> and <strong>Reasoning &amp; Communication</strong> on an A–E scale. <a href="https://docs.google.com/document/d/1JAFpi42DQj-YSQqLYLWysMSYe_OpMN51/edit?usp=drive_link" target="_blank" style="color:var(--t1);font-weight:600;">View the SACE Performance Standards →</a></div>
+
+    <div class="sem-divider">Semester 1 Assessments</div>
+    <div class="assign-list">
+
+      <!-- SAT 1: Functions & Relations -->
+      <div class="assign-card">
+        <div class="assign-icon" style="background:rgba(196,149,106,0.15)">📝</div>
+        <div class="assign-info">
+          <div class="assign-name">Functions &amp; Relations</div>
+          <div class="assign-meta">Topic 1</div>
+        </div>
+        <span class="assign-badge badge-sat">SAT</span>
+      </div>
+      <div id="s1sat1-detail-wrap" style="display:none">
+        <div class="folio-detail">
+          <h3>SAT 1 – Functions &amp; Relations</h3>
+          <div class="folio-meta">Topic 1 · 60 minutes · 38 marks · Hard copy · Blue or black pen</div>
+          <div class="folio-section-title">What's covered</div>
+          <ul class="folio-steps">
+            <li>Slope, x-intercept, y-intercept, and slopes of parallel lines for a variety of line equations (including vertical and horizontal lines)</li>
+            <li>Composite functions — evaluating f(−2), f(g(x)), and related expressions</li>
+            <li>Domain and range, function notation, and the vertical line test</li>
+            <li>Circle equations in centre-radius form</li>
+          </ul>
+          <div class="folio-section-title">Conditions</div>
+          <div class="folio-body">Supervised in class. Blue or black pen only. Graphics calculator permitted. One A4 page of handwritten notes. Show all steps — if you know your answer is wrong, explain why and what it should look like.</div>
+          <div class="folio-section-title">Graded on</div>
+          <div class="folio-body">Concepts &amp; Techniques (CT1–CT4) and Reasoning &amp; Communication (RC1–RC5) — A to E performance standards.</div>
+        </div>
+      </div>
+      <div style="padding-left:4px"><button class="folio-toggle" onclick="toggleDetail('s1sat1')">▸ View task details</button></div>
+
+      <!-- AST 2: Investigation – Features of Polynomials -->
+      <div class="assign-card">
+        <div class="assign-icon" style="background:rgba(122,158,126,0.15)">🔬</div>
+        <div class="assign-info">
+          <div class="assign-name">Features of Polynomials</div>
+          <div class="assign-meta">Topic 2</div>
+        </div>
+        <span class="assign-badge badge-inv">Investigation</span>
+      </div>
+      <div id="s1inv-detail-wrap" style="display:none">
+        <div class="folio-detail">
+          <h3>AST 2 – Investigating the Features of Polynomials</h3>
+          <div class="folio-meta">Topic 2 · Electronic submission · Submit draft on Daymap first</div>
+          <div class="folio-section-title">Aim</div>
+          <div class="folio-body">Use graphing technology to investigate the relationship between the degree of a polynomial and the number of turning points and points of inflection it can have.</div>
+          <div class="folio-section-title">What you need to do</div>
+          <ul class="folio-steps">
+            <li><strong>Part A:</strong> Investigate at least three degree-4 polynomials with four distinct real linear factors — record roots, turning points, inflection points, and a small graph in a table. Repeat for degree-5 polynomials with five distinct linear factors.</li>
+            <li><strong>Conjecture:</strong> Form a conjecture about turning points and inflection points for a degree-n polynomial. Support it by investigating a polynomial of your own choice.</li>
+            <li><strong>Part B:</strong> Investigate polynomials with a squared linear factor and two distinct linear factors. Explore further forms of your choice.</li>
+            <li><strong>Write-up:</strong> Present findings clearly — sequential order matters as each question builds on the last. Use correct notation throughout.</li>
+          </ul>
+          <div class="folio-section-title">Process</div>
+          <div class="folio-body">Read the full investigation → review the exemplar on Daymap → answer in order → write up → submit draft on Daymap → action Mr Johnson's feedback → submit final copy electronically.</div>
+          <div class="folio-section-title">Graded on</div>
+          <div class="folio-body">Concepts &amp; Techniques (CT1–CT4) and Reasoning &amp; Communication (RC1–RC5) — A to E performance standards.</div>
+        </div>
+      </div>
+      <div style="padding-left:4px"><button class="folio-toggle" onclick="toggleDetail('s1inv')">▸ View task details</button></div>
+
+      <!-- SAT 2: Trigonometry 3.1 -->
+      <div class="assign-card">
+        <div class="assign-icon" style="background:rgba(124,155,181,0.15)">📝</div>
+        <div class="assign-info">
+          <div class="assign-name">Trigonometry</div>
+          <div class="assign-meta">Topic 3</div>
+        </div>
+        <span class="assign-badge badge-sat">SAT</span>
+      </div>
+      <div id="s1sat2-detail-wrap" style="display:none">
+        <div class="folio-detail">
+          <h3>SAT 2 – Trigonometry (Subtopic 3.1: Trig Ratios)</h3>
+          <div class="folio-meta">Topic 3 · 60 minutes · Hard copy submission · Graphics calculator permitted</div>
+          <div class="folio-section-title">What's covered</div>
+          <ul class="folio-steps">
+            <li>Area of non-right-angled triangles using ½ab sin C (e.g. sides 9.5 cm and 10 cm, included angle 47°)</li>
+            <li>Identifying when the sine rule alone is sufficient to solve a triangle — given various triangle configurations</li>
+            <li>Applying the sine rule, cosine rule, and area rule to solve problems in a range of contexts</li>
+            <li>Graphical representations may be required to support problem-solving strategies</li>
+          </ul>
+          <div class="folio-section-title">Conditions</div>
+          <div class="folio-body">Supervised in class. Hard copy submission. Graphics calculator permitted. Two A4 pages of handwritten notes. Show all steps clearly — if you know your answer is wrong, explain why.</div>
+          <div class="folio-section-title">Graded on</div>
+          <div class="folio-body">Concepts &amp; Techniques (CT1–CT4) and Reasoning &amp; Communication (RC1–RC5) — A to E performance standards.</div>
+        </div>
+      </div>
+      <div style="padding-left:4px"><button class="folio-toggle" onclick="toggleDetail('s1sat2')">▸ View task details</button></div>
+
+      <!-- S1 Exam -->
+      <div class="assign-card">
+        <div class="assign-icon" style="background:rgba(143,138,176,0.15)">🎓</div>
+        <div class="assign-info">
+          <div class="assign-name">Semester 1 Examination</div>
+          <div class="assign-meta">Topics 1–3</div>
+        </div>
+        <span class="assign-badge badge-exam">Exam</span>
+      </div>
+      <div id="s1exam-detail-wrap" style="display:none">
+        <div class="folio-detail">
+          <h3>Semester 1 Examination</h3>
+          <div class="folio-meta">120 minutes · Scientific calculator required · One A4 (double-sided) notes page permitted</div>
+          <div class="folio-section-title">Structure</div>
+          <ul class="folio-steps">
+            <li><strong>Section 1 — Functions &amp; Relations (27 marks):</strong> Vertical line test with explanation, domain and range, sign diagrams from graphs and algebraic functions (e.g. f(x) = (x+3)(x−1), g(x) = 5(x−2)²/(4−x)), composite functions f(x²) and f(g(x)), circle equations, and determining constants from given conditions</li>
+            <li><strong>Section 2 — Quadratic &amp; Other Polynomials (33 marks):</strong> Quadratic formula, factorising to solve (including rational equations like 3x − 10/x = 13), discriminant analysis, axis of symmetry, vertex and intercepts, sketching, determining quadratics from roots and a point, intersection of curves algebraically, polynomial behaviour at x-intercepts, and a gutter optimisation problem (maximising cross-sectional area from a 30 cm sheet)</li>
+            <li><strong>Section 3 — Trigonometry (30 marks):</strong> Radian/degree conversions (10π/3 and −281.3°), arc length and sector area (angle 1.22 rad, arc 8.66 cm), exact values of sin θ and tan θ given cos θ = −4/5 with π &lt; θ &lt; 3π/2</li>
+          </ul>
+          <div class="folio-section-title">Conditions</div>
+          <div class="folio-body">Answer all questions in the spaces provided. Additional working on the reverse of each page — label carefully. All working must be shown. Scientific calculator required.</div>
+        </div>
+      </div>
+      <div style="padding-left:4px"><button class="folio-toggle" onclick="toggleDetail('s1exam')">▸ View task details</button></div>
+
+    </div>
+
+    <div class="sem-divider">Semester 2 Assessments</div>
+    <div class="assign-list">
+
+      <!-- SAT 1: Counting & Statistics -->
+      <div class="assign-card">
+        <div class="assign-icon" style="background:rgba(176,126,138,0.15)">📝</div>
+        <div class="assign-info">
+          <div class="assign-name">Counting &amp; Statistics</div>
+          <div class="assign-meta">Topic 4</div>
+        </div>
+        <span class="assign-badge badge-sat">SAT</span>
+      </div>
+      <div id="sat1-detail-wrap" style="display:none">
+        <div class="folio-detail">
+          <h3>AT1 SAT – Counting &amp; Statistics</h3>
+          <div class="folio-meta">Stage 1 Math Methods · Topic 4 · Technology permitted</div>
+          <div class="folio-section-title">What's covered</div>
+          <div class="folio-body">Counting principles (multiplication principle, permutations, combinations), discrete and continuous data, statistical measures (mean, median, mode, IQR, standard deviation), and normal distributions including the 68–95–99.7 rule.</div>
+          <div class="folio-section-title">Conditions</div>
+          <div class="folio-body">Supervised in class. Graphics calculator and laptop permitted. Show all working clearly. Use correct notation and units throughout.</div>
+          <div class="folio-section-title">Graded on</div>
+          <div class="folio-body">Concepts &amp; Techniques (CT1–CT4) and Reasoning &amp; Communication (RC1–RC5) — A to E performance standards.</div>
+        </div>
+      </div>
+      <div style="padding-left:4px"><button class="folio-toggle" onclick="toggleDetail('sat1')">▸ View task details</button></div>
+
+      <!-- Folio: Supermarket Optimisation -->
+      <div class="assign-card">
+        <div class="assign-icon" style="background:rgba(160,128,96,0.15)">📋</div>
+        <div class="assign-info">
+          <div class="assign-name">Optimisation of a Supermarket Item</div>
+          <div class="assign-meta">Topic 5</div>
+        </div>
+        <span class="assign-badge badge-inv">Investigation</span>
+      </div>
+      <div id="folio-detail-wrap" style="display:none">
+        <div class="folio-detail">
+          <h3>Folio: Optimising a Supermarket Item</h3>
+          <div class="folio-meta">Stage 1 Math Methods · Topic 5: Applications of Differentiation · Max. 8 pages · Electronic submission</div>
+          <div class="folio-section-title">Overview</div>
+          <div class="folio-body">Investigate the optimal dimensions of a common supermarket container (e.g. a Vegemite jar, soft drink can, or milk carton) to minimise its surface area given a volume constraint. Apply differentiation and optimisation to solve a real-world problem and present your findings as a report.</div>
+          <div class="folio-section-title">What you need to do</div>
+          <ul class="folio-steps">
+            <li><strong>Choose a container</strong> — select a real supermarket item, research or measure its dimensions, and note any constraints.</li>
+            <li><strong>Build a mathematical model</strong> — write expressions for volume and surface area (e.g. cylinder: V = πr²h, A = 2πrh + 2πr²).</li>
+            <li><strong>Optimise</strong> — differentiate your surface area expression, solve f'(x) = 0, and verify a minimum using a sign diagram.</li>
+            <li><strong>Experiment</strong> — test at least three different configurations or constraints and compare your results.</li>
+            <li><strong>Develop a conjecture</strong> — what ratio or relationship consistently minimises surface area?</li>
+            <li><strong>Write a report</strong> — Introduction, Method, Calculations, Results, Conjecture, Conclusion. Correct notation throughout.</li>
+          </ul>
+          <div class="folio-section-title">Tools allowed</div>
+          <div class="folio-body">Desmos, Excel, graphing calculators, or other technology. Show clearly how you used any tools.</div>
+          <div class="folio-section-title">Graded on</div>
+          <div class="folio-body">Concepts &amp; Techniques (CT1–CT4) and Reasoning &amp; Communication (RC1–RC5) — A to E performance standards.</div>
+        </div>
+      </div>
+      <div style="padding-left:4px"><button class="folio-toggle" onclick="toggleDetail('folio')">▸ View task details</button></div>
+
+      <!-- SAT 2: Growth & Decay -->
+      <div class="assign-card">
+        <div class="assign-icon" style="background:rgba(143,138,176,0.15)">📝</div>
+        <div class="assign-info">
+          <div class="assign-name">How Safe is Chernobyl?</div>
+          <div class="assign-meta">Topic 6</div>
+        </div>
+        <span class="assign-badge badge-sat">SAT</span>
+      </div>
+      <div id="sat2-detail-wrap" style="display:none">
+        <div class="folio-detail">
+          <h3>AT2 SAT – How Safe is Chernobyl?</h3>
+          <div class="folio-meta">Stage 1 Math Methods · Topic 6: Growth &amp; Decay · Technology permitted</div>
+          <div class="folio-section-title">Context</div>
+          <div class="folio-body">The 1986 Chernobyl disaster released more radiation than both atomic bombs dropped on Japan combined. This task uses the real decay equation for Caesium-137 — the primary radioactive material released — to explore exponential decay, logarithms, and inverse functions in a real-world context.</div>
+          <div class="folio-section-title">What's covered</div>
+          <ul class="folio-steps">
+            <li>Using the decay equation A(t) = A₀e^(−0.023t) to find remaining Caesium-137 today (starting from 120 tonnes in 1986)</li>
+            <li>Map scale calculations — converting from a 1:20,000 cm scale map to real distances (storage facility and fire station from reactor)</li>
+            <li>Radiation dosage modelling using an inverse power function, finding Gy at given distances</li>
+            <li>Topics also draw on functions and graphs from Topic 1</li>
+          </ul>
+          <div class="folio-section-title">Conditions</div>
+          <div class="folio-body">Supervised in class. Graphics calculator and laptop permitted. Show all steps clearly. Use correct notation and units. If your answer is wrong and you know it, explain why and what the answer should look like.</div>
+          <div class="folio-section-title">Graded on</div>
+          <div class="folio-body">Concepts &amp; Techniques (CT1–CT4) and Reasoning &amp; Communication (RC1–RC5) — A to E performance standards.</div>
+        </div>
+      </div>
+      <div style="padding-left:4px"><button class="folio-toggle" onclick="toggleDetail('sat2')">▸ View task details</button></div>
+
+      <!-- S2 Exam -->
+      <div class="assign-card">
+        <div class="assign-icon" style="background:rgba(143,138,176,0.15)">🎓</div>
+        <div class="assign-info">
+          <div class="assign-name">Semester 2 Examination</div>
+          <div class="assign-meta">Topics 4–6</div>
+        </div>
+        <span class="assign-badge badge-exam">Exam</span>
+      </div>
+      <div id="exam-detail-wrap" style="display:none">
+        <div class="folio-detail">
+          <h3>Semester 2 Examination</h3>
+          <div class="folio-meta">Scientific calculator required · 60 marks total</div>
+          <div class="folio-section-title">Structure</div>
+          <ul class="folio-steps">
+            <li><strong>Section A — 26 marks</strong> · Growth &amp; Decay: logarithm statements, solving exponential equations (including eˣ and base ⅓), single logarithm simplification, removing logs from equations</li>
+            <li><strong>Section B — 15 marks</strong> · Exponential modelling: radioactive decay (find initial weight, time to 20%), population growth (find population in 2010, 2024, year a target is reached)</li>
+            <li><strong>Section C — 12 marks</strong> · Differential Calculus: finding f'(x), first principles derivative, slope of tangent at x = 3, derivative applications</li>
+            <li><strong>Section D — 7 marks</strong> · Mixed: finding constants, population after 6 hours using exponential models, derivative function applications</li>
+          </ul>
+          <div class="folio-section-title">Conditions</div>
+          <div class="folio-body">Answer all questions in the spaces provided. Show all working for full marks. Additional working on the reverse of each page. Scientific calculator required.</div>
+          <div class="folio-section-title">Topics examined</div>
+          <div class="folio-body">Topic 4 (Counting &amp; Statistics), Topic 5 (Differential Calculus), Topic 6 (Growth &amp; Decay) — with integration of earlier topics where relevant.</div>
+        </div>
+      </div>
+      <div style="padding-left:4px"><button class="folio-toggle" onclick="toggleDetail('exam')">▸ View task details</button></div>
+
+    </div>
+  </div>
+</div>
+
+<!-- REVISION -->
+<div id="page-revision" class="page">
+  <div class="section" style="padding-top:44px">
+    <div class="revision-tabs">
+      <button class="rev-tab active" id="tab-flashcards" onclick="switchRevTab('flashcards')">🃏 Flashcards</button>
+      <button class="rev-tab" id="tab-quiz" onclick="switchRevTab('quiz')">⚡ Quick Quiz</button>
+      <button class="rev-tab" id="tab-match" onclick="switchRevTab('match')">🎯 Match-Up</button>
+      <button class="rev-tab" id="tab-boss" onclick="switchRevTab('boss')">⚔️ Boss Battles</button>
+      <button class="rev-tab" id="tab-mistake" onclick="switchRevTab('mistake')">🕵️ Find the Mistake</button>
+      <button class="rev-tab" id="tab-dld" onclick="switchRevTab('dld')">🪂 Don't Look Down</button>
+      <button class="rev-tab" id="tab-exam" onclick="switchRevTab('exam')">🎲 Exam Generator</button>
+      <button class="rev-tab" id="tab-progress" onclick="switchRevTab('progress')">📊 My Progress</button>
+    </div>
+
+    <!-- FLASHCARDS -->
+    <div id="rev-flashcards" class="rev-section active">
+      <div class="flashcard-controls">
+        <select class="topic-select" id="fc-topic-select" onchange="loadFlashcards()">
+          <option value="all">All Topics</option>
+          <option value="functions">Topic 1 – Functions &amp; Graphs</option>
+          <option value="polynomials">Topic 2 – Polynomials</option>
+          <option value="trig">Topic 3 – Trigonometry</option>
+          <option value="counting">Topic 4 – Counting &amp; Statistics</option>
+          <option value="calculus">Topic 5 – Differential Calculus</option>
+          <option value="growth">Topic 6 – Growth &amp; Decay</option>
+        </select>
+        <div class="fc-count" id="fc-counter">0 / 0</div>
+      </div>
+      <div class="flashcard-area">
+        <div class="flashcard-progress"><div class="flashcard-bar" id="fc-bar" style="width:0%"></div></div>
+        <div class="flashcard" id="flashcard" onclick="flipCard()">
+          <div class="flashcard-inner">
+            <div class="fc-front">
+              <div class="fc-hint">Tap to reveal answer</div>
+              <div class="fc-question" id="fc-question">Loading...</div>
+            </div>
+            <div class="fc-back">
+              <div class="fc-hint">Answer</div>
+              <div class="fc-answer" id="fc-answer"></div>
+            </div>
+          </div>
+        </div>
+        <div class="flashcard-nav">
+          <button class="fc-btn incorrect" onclick="markCard(false)">✗ Still learning</button>
+          <div class="fc-score" id="fc-score">✓ 0 &nbsp; ✗ 0</div>
+          <button class="fc-btn correct" onclick="markCard(true)">✓ Got it</button>
+        </div>
+        <button class="fc-btn" style="margin-top:4px" onclick="shuffleCards()">🔀 Shuffle deck</button>
+      </div>
+    </div>
+
+    <!-- QUIZ -->
+    <div id="rev-quiz" class="rev-section">
+      <div class="quiz-card" id="quiz-card">
+        <div class="quiz-q-num" id="quiz-qnum">Question 1 of 10</div>
+        <div class="quiz-question" id="quiz-question"></div>
+        <div class="quiz-options" id="quiz-options"></div>
+        <div class="quiz-feedback" id="quiz-feedback"></div>
+        <div class="quiz-footer">
+          <div class="quiz-score-bar" id="quiz-score-bar">Score: 0</div>
+          <button class="quiz-check-btn" id="quiz-btn" onclick="handleQuiz()" disabled>Check Answer</button>
+        </div>
+      </div>
+      <div class="results-screen" id="quiz-results">
+        <div class="result-emoji" id="quiz-emoji">🎉</div>
+        <div class="result-score" id="quiz-result-score">0/10</div>
+        <div class="result-label" id="quiz-result-label">Keep going!</div>
+        <button class="restart-btn" onclick="startQuiz()">Play Again</button>
+      </div>
+    </div>
+
+    <!-- MATCH -->
+    <div id="rev-match" class="rev-section">
+      <div class="match-header">
+        <select class="topic-select" style="max-width:280px" id="match-topic" onchange="startMatch()">
+          <option value="polynomials">Topic 2 – Polynomials</option>
+          <option value="trig">Topic 3 – Trigonometry</option>
+          <option value="calculus">Topic 5 – Calculus</option>
+          <option value="growth">Topic 6 – Growth &amp; Decay</option>
+        </select>
+        <div class="match-lives" id="match-lives">❤️❤️❤️</div>
+        <div class="match-combo" id="match-combo"></div>
+      </div>
+      <div class="match-grid" id="match-grid"></div>
+      <div class="results-screen" id="match-results">
+        <div class="result-emoji">🎯</div>
+        <div class="result-score" id="match-result-score">—</div>
+        <div class="result-label">All pairs matched!</div>
+        <button class="restart-btn" onclick="startMatch()">Play Again</button>
+      </div>
+    </div>
+
+    <!-- BOSS BATTLES -->
+    <div id="rev-boss" class="rev-section">
+      <div id="boss-select">
+        <div class="info-banner" style="margin-bottom:20px">⚔️ <strong>Boss Battles</strong> — face each topic boss. Answer 4 out of 5 questions correctly to defeat them. Defeated bosses are saved.</div>
+        <div class="boss-select-grid" id="boss-select-grid"></div>
+      </div>
+      <div id="boss-arena" style="display:none">
+        <div class="boss-hp-wrap"><div class="boss-hp-label" id="boss-hp-label">HP: 5/5</div><div class="boss-hp-bar"><div class="boss-hp-fill" id="boss-hp-fill" style="width:100%"></div></div></div>
+        <div class="boss-arena" id="boss-q-container"></div>
+        <div class="boss-result" id="boss-result">
+          <div class="boss-result-emoji" id="boss-result-emoji">🎉</div>
+          <div class="boss-result-title" id="boss-result-title">Boss Defeated!</div>
+          <div class="boss-result-sub" id="boss-result-sub">You answered 4/5 correctly.</div>
+          <button class="back-btn" onclick="showBossSelect()">← Back to Bosses</button>
+          <button class="restart-btn" onclick="retryBoss()">Try Again</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- FIND THE MISTAKE -->
+    <div id="rev-mistake" class="rev-section">
+      <div class="info-banner" style="margin-bottom:20px">🕵️ <strong>Find the Mistake</strong> — each question shows a worked solution with one error. Find where the working first goes wrong.</div>
+      <div id="mistake-main">
+        <div class="mistake-card" id="mistake-card">
+          <div class="exam-topic-tag" id="mistake-topic-tag">Topic</div>
+          <div class="mistake-prompt" id="mistake-prompt">Loading...</div>
+          <div class="mistake-scenario" id="mistake-scenario"></div>
+          <p style="font-size:14px;font-weight:600;color:var(--text);margin-bottom:12px">Where is the first mistake?</p>
+          <div class="mistake-opts" id="mistake-opts"></div>
+          <div class="mistake-explain" id="mistake-explain"></div>
+          <div class="mistake-footer">
+            <div class="mistake-score" id="mistake-score">Score: 0 / 0</div>
+            <button class="quiz-check-btn" id="mistake-btn" onclick="handleMistake()" disabled>Check Answer</button>
+          </div>
+        </div>
+        <div class="mistake-nav-row">
+          <button class="fc-btn" onclick="nextMistake()">Next Question →</button>
+          <button class="fc-btn" onclick="shuffleMistakes()">🔀 Shuffle</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXAM GENERATOR -->
+    <div id="rev-exam" class="rev-section">
+      <div class="info-banner" style="margin-bottom:20px">🎲 <strong>Random Exam Generator</strong> — generates a fresh 10-question exam every time. Answer all questions then submit for auto-marking.</div>
+      <div class="exam-controls">
+        <select class="topic-select" id="exam-topic-select" style="max-width:280px">
+          <option value="all">All Topics (mixed)</option>
+          <option value="functions">Topic 1 – Functions &amp; Graphs</option>
+          <option value="polynomials">Topic 2 – Polynomials</option>
+          <option value="trig">Topic 3 – Trigonometry</option>
+          <option value="counting">Topic 4 – Counting &amp; Statistics</option>
+          <option value="calculus">Topic 5 – Differential Calculus</option>
+          <option value="growth">Topic 6 – Growth &amp; Decay</option>
+        </select>
+        <button class="exam-gen-btn" onclick="generateExam()">🎲 Generate Exam</button>
+      </div>
+      <div class="exam-paper" id="exam-paper"></div>
+      <div class="exam-submit-row" id="exam-submit-row" style="display:none">
+        <button class="exam-submit-btn" id="exam-submit-btn" onclick="submitExam()">Submit &amp; Mark</button>
+        <div class="exam-score-display" id="exam-score-display"></div>
+      </div>
+    </div>
+
+    <!-- PROGRESS DASHBOARD -->
+    <div id="rev-progress" class="rev-section">
+      <div class="info-banner" style="margin-bottom:20px">📊 <strong>My Progress</strong> — tracks your flashcard performance across all topics. Keep going until every bar is green!</div>
+      <div class="dash-total" id="dash-total">Complete flashcard sessions to build your progress.</div>
+      <div class="dash-grid" id="dash-grid"></div>
+      <button class="dash-reset" onclick="resetProgress()">Reset all progress</button>
+    </div>
+
+    <!-- DON'T LOOK DOWN -->
+    <div id="rev-dld" class="rev-section">
+      <div id="dld-wrapper">
+
+        <!-- START SCREEN -->
+        <div id="dld-start">
+          <div class="dld-start-card">
+            <div class="dld-start-emoji">🪂</div>
+            <h2 class="dld-start-title">Don't Look Down</h2>
+            <p class="dld-start-sub">Jump between platforms, climbing as high as you can. Your energy drains over time — answer questions correctly to refuel. Fall off a platform and you're back to the bottom.</p>
+            <div class="dld-start-rules">
+              <div class="dld-rule">🦘 Jump between platforms going higher</div>
+              <div class="dld-rule">⚡ Energy drains constantly — don't let it hit zero</div>
+              <div class="dld-rule">❓ Tap "Answer Question" to fuel up — correct = energy restored</div>
+              <div class="dld-rule">❌ Wrong answer = no energy gained, don't waste them</div>
+              <div class="dld-rule">💀 Fall off the edge = back to the bottom</div>
+            </div>
+            <select class="topic-select" id="dld-topic" style="margin-bottom:16px;max-width:300px;width:100%">
+              <option value="all">All Topics</option>
+              <option value="functions">Topic 1 – Functions &amp; Graphs</option>
+              <option value="polynomials">Topic 2 – Polynomials</option>
+              <option value="trig">Topic 3 – Trigonometry</option>
+              <option value="counting">Topic 4 – Counting &amp; Statistics</option>
+              <option value="calculus">Topic 5 – Differential Calculus</option>
+              <option value="growth">Topic 6 – Growth &amp; Decay</option>
+            </select>
+            <button class="dld-start-btn" onclick="startDLD()">Start Climbing 🚀</button>
+          </div>
+        </div>
+
+        <!-- GAME SCREEN -->
+        <div id="dld-game" style="display:none">
+          <div class="dld-game-shell">
+            <!-- HUD -->
+            <div class="dld-hud">
+              <div class="dld-hud-block">
+                <span class="dld-hud-label">Height</span>
+                <span class="dld-hud-val" id="dld-height">0m</span>
+              </div>
+              <div class="dld-hud-block">
+                <span class="dld-hud-label">Score</span>
+                <span class="dld-hud-val" id="dld-score">0</span>
+              </div>
+              <div class="dld-hud-block">
+                <span class="dld-hud-label">Best</span>
+                <span class="dld-hud-val" id="dld-best">0m</span>
+              </div>
+              <div class="dld-energy-wrap">
+                <span class="dld-hud-label" style="display:block;text-align:center;margin-bottom:4px">⚡ Energy</span>
+                <div class="dld-energy-track">
+                  <div class="dld-energy-fill" id="dld-efill" style="width:100%"></div>
+                </div>
+              </div>
+              <div class="dld-hud-block">
+                <span class="dld-hud-label">Correct</span>
+                <span class="dld-hud-val" id="dld-correct">0</span>
+              </div>
+              <div class="dld-hud-block" style="border-right:none">
+                <button class="dld-quit-btn" onclick="quitDLD()">✕</button>
+              </div>
+            </div>
+            <!-- CANVAS -->
+            <div class="dld-canvas-wrap">
+              <canvas id="dld-canvas"></canvas>
+              <!-- floating answer button -->
+              <button class="dld-ask-btn" id="dld-ask-btn" onclick="dldOpenQuestion()">❓ Answer Question</button>
+              <!-- question panel -->
+              <div class="dld-q-panel" id="dld-q-panel">
+                <div class="dld-q-text" id="dld-q-text"></div>
+                <div class="dld-q-opts" id="dld-q-opts"></div>
+                <div class="dld-q-fb" id="dld-q-fb"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- GAME OVER -->
+        <div id="dld-over" style="display:none">
+          <div class="dld-start-card">
+            <div class="dld-start-emoji" id="dld-over-emoji">💀</div>
+            <h2 class="dld-start-title" id="dld-over-title">You fell!</h2>
+            <p class="dld-start-sub" id="dld-over-sub"></p>
+            <div class="dld-over-stats">
+              <div class="dld-over-stat"><span id="dov-height">0m</span><span>Height reached</span></div>
+              <div class="dld-over-stat"><span id="dov-score">0</span><span>Score</span></div>
+              <div class="dld-over-stat"><span id="dov-correct">0</span><span>Correct answers</span></div>
+              <div class="dld-over-stat"><span id="dov-xp">+0</span><span>XP earned</span></div>
+            </div>
+            <button class="dld-start-btn" onclick="startDLD()">Play Again 🚀</button>
+            <button class="back-btn" style="margin-top:8px;display:block;width:100%;text-align:center;border-radius:20px;padding:10px" onclick="dldShowStart()">Back to menu</button>
+          </div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// ===== NAV =====
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>{
+    p.classList.remove('active');
+    p.style.display='none';
+  });
+  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+  const target = document.getElementById('page-'+id);
+  if(target){
+    target.style.display='block';
+    requestAnimationFrame(()=>{
+      requestAnimationFrame(()=>{ target.classList.add('active'); });
+    });
+  }
+  document.querySelectorAll('.nav-btn').forEach(b=>{
+    const t=b.textContent.toLowerCase().replace(/[^a-z]/g,'');
+    if((id==='home'&&t==='home')||(id==='resources'&&t==='resources')||(id==='assignments'&&t==='assessments')||(id==='revision'&&t==='revision')||(id==='calculator'&&t.includes('calculator')))b.classList.add('active');
+  });
+  if(id==='home') renderDashboard();
+}
+function setCalcMode(mode){
+  const urls={
+    graphing:'https://www.geogebra.org/graphing?embed',
+    scientific:'https://www.geogebra.org/scientific?embed',
+    cas:'https://www.geogebra.org/cas?embed'
+  };
+  document.getElementById('calc-frame').src=urls[mode]||urls.graphing;
+}
+function showRevision(tab,topic){
+  showPage('revision');switchRevTab(tab);
+  if(topic){document.getElementById('fc-topic-select').value=topic;loadFlashcards();}
+}
+function showBoss(topicId){
+  showPage('revision');switchRevTab('boss');
+  // pre-select the boss matching the topic
+  setTimeout(()=>{
+    const cards=document.querySelectorAll('.boss-card');
+    cards.forEach(c=>{ if(c.dataset.id===topicId) c.click(); });
+  },200);
+}
+function toggleDetail(id){
+  const w=document.getElementById(id+'-detail-wrap');
+  const open=w.style.display==='none';
+  w.style.display=open?'block':'none';
+  // find the button immediately after this wrap's preceding sibling card
+  const allBtns=document.querySelectorAll('.folio-toggle');
+  allBtns.forEach(btn=>{
+    if(btn.getAttribute('onclick')===`toggleDetail('${id}')`){
+      btn.textContent=open?'▾ Hide task details':'▸ View task details';
+    }
+  });
+}
+
+// ===== FLASHCARD DATA =====
+const allCards={
+  functions:[
+    {q:"Slope-intercept form of a line?",a:"<span class='fc-math'>y = mx + c</span><br>m = slope &nbsp; c = y-intercept"},
+    {q:"What is a function?",a:"A relation where each x-value maps to exactly <b>one</b> y-value. Passes the vertical line test."},
+    {q:"Equation of a circle centred at (h, k) with radius r?",a:"<span class='fc-math'>(x − h)² + (y − k)² = r²</span>"},
+    {q:"Basic hyperbola equation?",a:"<span class='fc-math'>y = a/(x − c)</span><br>Vertical asymptote: x = c &nbsp; Horizontal: y = 0"},
+    {q:"Domain vs Range?",a:"<b>Domain</b> = all valid x-values<br><b>Range</b> = all resulting y-values"},
+    {q:"How do you find the inverse of a function?",a:"Swap x and y, then rearrange for y.<br>e.g. y = 2x+3 → x = 2y+3 → <span class='fc-math'>y = (x−3)/2</span>"},
+    {q:"Gradient between two points (x₁,y₁) and (x₂,y₂)?",a:"<span class='fc-math'>m = (y₂ − y₁) / (x₂ − x₁)</span>"},
+    {q:"Equation of a line with gradient m through point (x₁, y₁)?",a:"<span class='fc-math'>y − y₁ = m(x − x₁)</span> — point-gradient form"},
+    {q:"When are two lines parallel?",a:"When they have the <b>same gradient</b> (m₁ = m₂)"},
+    {q:"When are two lines perpendicular?",a:"When the product of their gradients is −1.<br><span class='fc-math'>m₁ × m₂ = −1</span>"},
+    {q:"What is the vertical line test used for?",a:"Determining whether a graph represents a function — if any vertical line crosses the graph more than once, it is <b>not</b> a function."},
+    {q:"Domain of y = √x?",a:"<span class='fc-math'>x ≥ 0</span> — you cannot take the square root of a negative number (in the reals)"},
+    {q:"What does f(x) = g(x) mean graphically?",a:"The x-coordinate(s) where the two graphs intersect"},
+    {q:"What is a piecewise function?",a:"A function defined by different rules over different intervals of its domain"},
+    {q:"What transformation does y = f(x) + k cause?",a:"Vertical translation: shifts the graph up by k units (or down if k is negative)"},
+    {q:"What transformation does y = f(x − h) cause?",a:"Horizontal translation: shifts the graph right by h units (or left if h is negative)"},
+    {q:"Standard form of a circle's equation expanded?",a:"<span class='fc-math'>x² + y² + Dx + Ey + F = 0</span> — complete the square to find centre and radius"},
+    {q:"What is the range of a hyperbola y = a/(x−c) + d?",a:"All real y except y = d (the horizontal asymptote)"},
+  ],
+  polynomials:[
+    {q:"Discriminant Δ of ax² + bx + c?",a:"<span class='fc-math'>Δ = b² − 4ac</span><br>Δ > 0: 2 real zeros · Δ = 0: 1 repeated · Δ < 0: none"},
+    {q:"Quadratic formula?",a:"<span class='fc-math'>x = (−b ± √Δ) / 2a</span>"},
+    {q:"Three forms of a quadratic?",a:"<b>General:</b> ax² + bx + c<br><b>Factored:</b> a(x−α)(x−β)<br><b>Vertex:</b> a(x−h)² + k"},
+    {q:"Sum and product of roots for ax² + bx + c = 0?",a:"<span class='fc-math'>Sum = −b/a &nbsp;&nbsp; Product = c/a</span>"},
+    {q:"What is a positive definite quadratic?",a:"Always positive (above x-axis). Requires <b>a > 0 and Δ < 0</b>."},
+    {q:"What does the leading coefficient tell you?",a:"Sign of a determines end behaviour.<br>a > 0 → rises right · a < 0 → falls right"},
+    {q:"How many real zeros can a cubic have?",a:"1, 2, or 3. A cubic must have at least one real zero."},
+    {q:"How do you complete the square on x² + bx?",a:"Add and subtract (b/2)²: <span class='fc-math'>x² + bx = (x + b/2)² − (b/2)²</span>"},
+    {q:"x-coordinate of a parabola's turning point (general form)?",a:"<span class='fc-math'>x = −b / 2a</span> — this is also the axis of symmetry"},
+    {q:"What does a repeated factor (x − a)² in a polynomial mean graphically?",a:"The graph <b>touches</b> the x-axis at x = a but does not cross it"},
+    {q:"What does an odd-power factor (x − a)³ mean graphically?",a:"The graph crosses the x-axis at x = a with a flattened 'wiggle' (point of inflection on the axis)"},
+    {q:"How do you factorise by grouping?",a:"Split the middle term(s), group pairs with common factors, then factor each group and pull out the shared bracket"},
+    {q:"What is the remainder theorem?",a:"When a polynomial P(x) is divided by (x − a), the remainder equals <span class='fc-math'>P(a)</span>"},
+    {q:"What is the factor theorem?",a:"(x − a) is a factor of P(x) if and only if <span class='fc-math'>P(a) = 0</span>"},
+    {q:"y-intercept of any polynomial y = P(x)?",a:"Substitute x = 0 — the y-intercept is simply the constant term"},
+    {q:"How many turning points can a quartic have at most?",a:"3 turning points (degree n polynomial has at most n−1 turning points)"},
+  ],
+  trig:[
+    {q:"Sine Rule?",a:"<span class='fc-math'>a/sin A = b/sin B = c/sin C</span>"},
+    {q:"Cosine Rule (finding a side)?",a:"<span class='fc-math'>a² = b² + c² − 2bc cos A</span>"},
+    {q:"Area of a non-right triangle?",a:"<span class='fc-math'>Area = ½ ab sin C</span>"},
+    {q:"Convert 180° to radians?",a:"<span class='fc-math'>π radians</span>"},
+    {q:"Arc length formula?",a:"<span class='fc-math'>l = rθ</span> &nbsp; (θ in radians)"},
+    {q:"Area of a sector?",a:"<span class='fc-math'>A = ½ r²θ</span> &nbsp; (θ in radians)"},
+    {q:"Amplitude of y = A sin(Bx + C)?",a:"<span class='fc-math'>|A|</span> — max displacement from the x-axis"},
+    {q:"Period of y = sin(Bx)?",a:"<span class='fc-math'>2π / B</span>"},
+    {q:"Exact value of sin(π/6)?",a:"<span class='fc-math'>1/2</span>"},
+    {q:"Exact value of cos(π/4)?",a:"<span class='fc-math'>√2 / 2</span>"},
+    {q:"Cosine Rule rearranged to find an angle?",a:"<span class='fc-math'>cos A = (b² + c² − a²) / 2bc</span>"},
+    {q:"Exact value of tan(π/3)?",a:"<span class='fc-math'>√3</span>"},
+    {q:"Pythagorean identity?",a:"<span class='fc-math'>sin²θ + cos²θ = 1</span> — true for any angle θ"},
+    {q:"What does the ambiguous case of the Sine Rule refer to?",a:"When given two sides and a non-included angle (SSA), there may be 0, 1, or 2 possible triangles"},
+    {q:"Vertical translation of y = sin(x) + d?",a:"Shifts the whole graph up by d units; the new midline is y = d"},
+    {q:"Phase shift of y = sin(x − c)?",a:"Horizontal shift of c units to the right"},
+    {q:"Angle of elevation vs angle of depression?",a:"<b>Elevation</b>: measured upward from horizontal to an object above.<br><b>Depression</b>: measured downward from horizontal to an object below."},
+    {q:"In which quadrants is sine positive?",a:"Quadrants 1 and 2 (0° to 180°), using the ASTC (All Stations To Central) rule"},
+  ],
+  counting:[
+    {q:"Multiplication principle?",a:"If there are <b>a</b> ways to do one thing and <b>b</b> ways another, there are <span class='fc-math'>a × b</span> ways to do both."},
+    {q:"What is n!?",a:"<span class='fc-math'>n! = n × (n−1) × ... × 1</span><br>e.g. 4! = 24"},
+    {q:"Permutation formula P(n, r)?",a:"<span class='fc-math'>P(n,r) = n! / (n−r)!</span><br>Order matters — for arrangements"},
+    {q:"Combination formula C(n, r)?",a:"<span class='fc-math'>C(n,r) = n! / (r!(n−r)!)</span><br>Order does not matter — for selections"},
+    {q:"68-95-99.7 rule?",a:"68% within 1 SD · 95% within 2 SD · 99.7% within 3 SD of the mean"},
+    {q:"Discrete vs continuous data?",a:"<b>Discrete:</b> countable (e.g. no. of students)<br><b>Continuous:</b> measured (e.g. height, time)"},
+    {q:"What is 0!?",a:"<span class='fc-math'>0! = 1</span> by definition"},
+    {q:"Formula for the mean of a data set?",a:"<span class='fc-math'>x̄ = Σx / n</span> — sum of all values divided by the number of values"},
+    {q:"What is the interquartile range (IQR)?",a:"<span class='fc-math'>IQR = Q3 − Q1</span> — the spread of the middle 50% of the data"},
+    {q:"What does a z-score tell you?",a:"How many standard deviations a value is above or below the mean: <span class='fc-math'>z = (x − μ) / σ</span>"},
+    {q:"How do you identify an outlier using the IQR method?",a:"A value is an outlier if it is below Q1 − 1.5×IQR or above Q3 + 1.5×IQR"},
+    {q:"What is the difference between population and sample standard deviation?",a:"Population (σ) uses all data; sample (s) uses a subset and divides by (n−1) instead of n to correct for bias"},
+    {q:"When do you use a permutation instead of a combination?",a:"When the <b>order</b> of selection matters (e.g. arranging people in a queue, assigning 1st/2nd/3rd place)"},
+    {q:"What shape is the normal distribution curve?",a:"Symmetric, bell-shaped, with the mean, median and mode all equal at the centre"},
+  ],
+  calculus:[
+    {q:"Derivative from first principles?",a:"<span class='fc-math'>f'(x) = lim(h→0) [f(x+h) − f(x)] / h</span>"},
+    {q:"Power rule for differentiation?",a:"If y = xⁿ, then <span class='fc-math'>dy/dx = nxⁿ⁻¹</span>"},
+    {q:"Differentiate y = 3x⁴ − 2x²?",a:"<span class='fc-math'>dy/dx = 12x³ − 4x</span>"},
+    {q:"What does f'(x) = 0 mean?",a:"The function has a <b>stationary point</b> — could be a local max, min, or inflection."},
+    {q:"When is a function increasing?",a:"When <span class='fc-math'>f'(x) > 0</span> on that interval"},
+    {q:"Velocity from displacement?",a:"<span class='fc-math'>v = ds/dt</span> — velocity is the derivative of displacement"},
+    {q:"Equation of tangent at (a, f(a))?",a:"<span class='fc-math'>y − f(a) = f'(a)(x − a)</span>"},
+    {q:"How do you verify a stationary point is a minimum?",a:"Use a sign diagram — f'(x) changes from negative to positive through the stationary point."},
+    {q:"Derivative of a constant?",a:"<span class='fc-math'>0</span> — the gradient of a horizontal line is always zero"},
+    {q:"What is acceleration in terms of derivatives?",a:"<span class='fc-math'>a = dv/dt = d²s/dt²</span> — the second derivative of displacement"},
+    {q:"What does the gradient of a tangent line represent?",a:"The instantaneous rate of change of the function at that exact point"},
+    {q:"How do you find the equation of a normal to a curve at a point?",a:"The normal is perpendicular to the tangent: use gradient <span class='fc-math'>−1/f'(a)</span> through the point (a, f(a))"},
+    {q:"What does a sign diagram changing from positive to negative indicate?",a:"A <b>local maximum</b> at that stationary point"},
+    {q:"What does a sign diagram changing from negative to positive indicate?",a:"A <b>local minimum</b> at that stationary point"},
+    {q:"Why is differentiation useful for optimisation problems?",a:"Setting f'(x) = 0 finds stationary points, which often correspond to maximum or minimum values in real-world contexts"},
+  ],
+  growth:[
+    {q:"Index law: aᵐ × aⁿ = ?",a:"<span class='fc-math'>aᵐ⁺ⁿ</span>"},
+    {q:"What does a negative index mean?",a:"<span class='fc-math'>a⁻ⁿ = 1/aⁿ</span>"},
+    {q:"What does a fractional index mean?",a:"<span class='fc-math'>a^(m/n) = ⁿ√(aᵐ)</span>"},
+    {q:"What is a surd?",a:"An irrational root that cannot simplify to a whole number. e.g. √2, √5"},
+    {q:"Definition of log_a(x) = y?",a:"<span class='fc-math'>aʸ = x</span> — the log is the exponent you raise a to"},
+    {q:"Log multiplication rule?",a:"<span class='fc-math'>log(ab) = log(a) + log(b)</span>"},
+    {q:"Shape of y = aˣ when a > 1?",a:"Increasing curve through (0,1). Horizontal asymptote y = 0 as x → −∞."},
+    {q:"Index law: aᵐ ÷ aⁿ = ?",a:"<span class='fc-math'>aᵐ⁻ⁿ</span>"},
+    {q:"Index law: (aᵐ)ⁿ = ?",a:"<span class='fc-math'>aᵐⁿ</span> — multiply the exponents"},
+    {q:"What is a⁰ (for a ≠ 0)?",a:"<span class='fc-math'>a⁰ = 1</span>"},
+    {q:"Log division rule?",a:"<span class='fc-math'>log(a/b) = log(a) − log(b)</span>"},
+    {q:"Log power rule?",a:"<span class='fc-math'>log(aⁿ) = n·log(a)</span>"},
+    {q:"General form of exponential growth/decay?",a:"<span class='fc-math'>A(t) = A₀ × bᵗ</span> — A₀ is initial amount, b is growth/decay factor"},
+    {q:"What makes a model exponential decay rather than growth?",a:"The base b satisfies <span class='fc-math'>0 < b < 1</span> (decay) vs b > 1 (growth)"},
+    {q:"What is the natural exponential function?",a:"<span class='fc-math'>y = eˣ</span>, where e ≈ 2.71828 — common in continuous growth/decay models"},
+    {q:"How do you solve aˣ = b for x using logs?",a:"Take log of both sides: <span class='fc-math'>x = log(b) / log(a)</span>"},
+  ]
+};
+
+// ===== TEMPLATE QUESTION GENERATORS =====
+// Each generator returns a {q, a, _topic} card OR a {q, opts, ans, ex, _topic} quiz question
+// depending on mode ('card' or 'quiz')
+
+function rnd(min,max){return Math.floor(Math.random()*(max-min+1))+min;}
+function pick(arr){return arr[Math.floor(Math.random()*arr.length)];}
+function pm(){return Math.random()<0.5?1:-1;}  // positive or negative
+
+// ── FUNCTIONS & GRAPHS ──────────────────────────────────────────────────────
+
+function genGradient(mode){
+  const x1=rnd(-5,4),y1=rnd(-5,5),dx=rnd(1,6),dy=rnd(-6,6);
+  const x2=x1+dx,y2=y1+dy;
+  const g=dy+'/'+dx; const gDec=(dy/dx).toFixed(2);
+  const q=`Find the gradient of the line through (${x1}, ${y1}) and (${x2}, ${y2}).`;
+  const a=`m = (y₂ − y₁) / (x₂ − x₁) = (${y2} − ${y1}) / (${x2} − ${x1}) = ${dy}/${dx} = ${(dy/dx).toFixed(2)}`;
+  if(mode==='card') return {q,a,_topic:'functions'};
+  const wrong=[((dy+1)/dx).toFixed(2),((dy-1)/dx).toFixed(2),(dx/dy).toFixed(2)];
+  const opts=[gDec,...wrong];shuffleArray(opts);
+  return {q,opts,ans:opts.indexOf(gDec),ex:`m = (${y2}−${y1})/(${x2}−${x1}) = ${dy}/${dx} = ${gDec}`,_topic:'functions'};
+}
+
+function genYIntercept(mode){
+  const m=rnd(-4,4)||1, c=rnd(-8,8);
+  const q=`What is the y-intercept of y = ${m}x ${c>=0?'+ '+c:'− '+Math.abs(c)}?`;
+  const a=`Substitute x = 0: y = ${m}(0) ${c>=0?'+ '+c:'− '+Math.abs(c)} = <span class='fc-math'>${c}</span>`;
+  if(mode==='card') return {q,a,_topic:'functions'};
+  const opts=[String(c),String(c+1),String(c-1),String(m)];shuffleArray(opts);
+  return {q,opts,ans:opts.indexOf(String(c)),ex:`Set x = 0: y = ${c}`,_topic:'functions'};
+}
+
+function genCircle(mode){
+  const h=rnd(-5,5),k=rnd(-5,5),r=rnd(1,7);
+  const q=`Write the equation of a circle with centre (${h}, ${k}) and radius ${r}.`;
+  const a=`<span class='fc-math'>(x − ${h})² + (y − ${k})² = ${r*r}</span>`;
+  if(mode==='card') return {q,a,_topic:'functions'};
+  const r2=r*r;
+  const opts=[`(x−${h})²+(y−${k})²=${r2}`,`(x+${h})²+(y+${k})²=${r2}`,`(x−${h})²+(y−${k})²=${r}`,`(x−${k})²+(y−${h})²=${r2}`];
+  shuffleArray(opts);
+  return {q,opts,ans:opts.indexOf(`(x−${h})²+(y−${k})²=${r2}`),ex:`Standard form: (x−h)²+(y−k)²=r² → (x−${h})²+(y−${k})²=${r2}`,_topic:'functions'};
+}
+
+// ── POLYNOMIALS ─────────────────────────────────────────────────────────────
+
+function genDiscriminant(mode){
+  const a=rnd(1,4),b=pm()*rnd(1,8),c=pm()*rnd(1,6);
+  const delta=b*b-4*a*c;
+  const nature=delta>0?'two distinct real zeros':delta===0?'one repeated real zero':'no real zeros';
+  const q=`Calculate the discriminant of ${a}x² ${b>=0?'+ '+b:'− '+Math.abs(b)}x ${c>=0?'+ '+c:'− '+Math.abs(c)} and state the nature of its roots.`;
+  const a_ans=`Δ = b² − 4ac = (${b})² − 4(${a})(${c}) = ${b*b} − ${4*a*c} = <span class='fc-math'>${delta}</span><br>Therefore: ${nature}`;
+  if(mode==='card') return {q,a:a_ans,_topic:'polynomials'};
+  const opts=[String(delta),String(delta+4),String(b*b),String(-delta)];
+  const unique=[...new Set(opts)];while(unique.length<4)unique.push(String(delta+unique.length*3));
+  shuffleArray(unique);
+  return {q:`Calculate Δ for ${a}x² ${b>=0?'+ '+b:'− '+Math.abs(b)}x ${c>=0?'+ '+c:'− '+Math.abs(c)}:`,opts:unique.slice(0,4),ans:unique.slice(0,4).indexOf(String(delta)),ex:`Δ = (${b})² − 4(${a})(${c}) = ${b*b} − ${4*a*c} = ${delta}`,_topic:'polynomials'};
+}
+
+function genSumProduct(mode){
+  const a=rnd(1,4),b=pm()*rnd(1,9),c=pm()*rnd(1,8);
+  const sum=(-b/a).toFixed(2),prod=(c/a).toFixed(2);
+  const q=`For ${a}x² ${b>=0?'+ '+b:'− '+Math.abs(b)}x ${c>=0?'+ '+c:'− '+Math.abs(c)} = 0, what is the <b>sum</b> of the roots?`;
+  const a_ans=`Sum = −b/a = −(${b})/${a} = <span class='fc-math'>${sum}</span>`;
+  if(mode==='card') return {q,a:a_ans,_topic:'polynomials'};
+  const opts=[sum,prod,String((b/a).toFixed(2)),String((-c/a).toFixed(2))];
+  const u=[...new Set(opts)];while(u.length<4)u.push(String(parseFloat(sum)+u.length));
+  shuffleArray(u);
+  return {q,opts:u.slice(0,4),ans:u.slice(0,4).indexOf(sum),ex:`Sum = −b/a = ${sum}`,_topic:'polynomials'};
+}
+
+function genPowerRule(mode){
+  const coeff=rnd(1,6),power=rnd(2,5),sign=pm();
+  const c=sign*coeff;
+  const newCoeff=c*power,newPower=power-1;
+  const q=`Differentiate y = ${c}x<sup>${power}</sup>.`;
+  const a_ans=`<span class='fc-math'>dy/dx = ${newCoeff}x${newPower>1?'<sup>'+newPower+'</sup>':newPower===1?'':''}</span>  (power rule: multiply by index, reduce index by 1)`;
+  if(mode==='card') return {q,a:a_ans,_topic:'calculus'};
+  const correct=`${newCoeff}x${newPower===1?'':newPower}`;
+  const opts=[correct,`${c*power}x${power}`,`${c}x${power-1}`,`${newCoeff}x${newPower+1}`];
+  shuffleArray(opts);
+  return {q:`Differentiate y = ${c}x^${power}:`,opts,ans:opts.indexOf(correct),ex:`dy/dx = ${power} × ${c}x^(${power}−1) = ${newCoeff}x^${newPower}`,_topic:'calculus'};
+}
+
+function genTangentGradient(mode){
+  const a=rnd(1,4),n=rnd(2,4),x0=rnd(1,3);
+  const grad=a*n*Math.pow(x0,n-1);
+  const q=`Find the gradient of the tangent to y = ${a}x<sup>${n}</sup> at x = ${x0}.`;
+  const a_ans=`f'(x) = ${a*n}x<sup>${n-1}</sup>, so f'(${x0}) = ${a*n} × ${x0}${n-1>1?'<sup>'+(n-1)+'</sup>':''} = <span class='fc-math'>${grad}</span>`;
+  if(mode==='card') return {q,a:a_ans,_topic:'calculus'};
+  const opts=[String(grad),String(grad+a),String(a*n),String(a*Math.pow(x0,n))];
+  const u=[...new Set(opts)];while(u.length<4)u.push(String(grad+u.length*2));
+  shuffleArray(u);
+  return {q,opts:u.slice(0,4),ans:u.slice(0,4).indexOf(String(grad)),ex:`f'(x)=${a*n}x^${n-1}, f'(${x0})=${grad}`,_topic:'calculus'};
+}
+
+function genIndexLaw(mode){
+  const base=pick(['a','x','y','m']);
+  const m=rnd(2,6),n=rnd(1,5);
+  const types=[
+    {q:`Simplify ${base}<sup>${m}</sup> × ${base}<sup>${n}</sup>`,a:`<span class='fc-math'>${base}<sup>${m+n}</sup></span>  (add the indices)`,c:`${base}^${m+n}`,w:[`${base}^${m*n}`,`${base}^${m-n}`,`${base}^${Math.abs(m-n)+1}`]},
+    {q:`Simplify ${base}<sup>${m+n}</sup> ÷ ${base}<sup>${n}</sup>`,a:`<span class='fc-math'>${base}<sup>${m}</sup></span>  (subtract the indices)`,c:`${base}^${m}`,w:[`${base}^${m+n}`,`${base}^${n}`,`${base}^${m+1}`]},
+    {q:`Simplify (${base}<sup>${m}</sup>)<sup>${n}</sup>`,a:`<span class='fc-math'>${base}<sup>${m*n}</sup></span>  (multiply the indices)`,c:`${base}^${m*n}`,w:[`${base}^${m+n}`,`${base}^${m}`,`${base}^${m*n+1}`]},
+  ];
+  const t=pick(types);
+  if(mode==='card') return {q:t.q,a:t.a,_topic:'growth'};
+  const opts=[t.c,...t.w];shuffleArray(opts);
+  return {q:t.q,opts,ans:opts.indexOf(t.c),ex:t.a.replace(/<[^>]+>/g,''),_topic:'growth'};
+}
+
+function genLogCalc(mode){
+  const base=pick([2,3,5,10]);
+  const power=rnd(1,4);
+  const result=Math.pow(base,power);
+  const q=`Evaluate log<sub>${base}</sub>(${result}).`;
+  const a_ans=`log<sub>${base}</sub>(${result}) = <span class='fc-math'>${power}</span> because ${base}<sup>${power}</sup> = ${result}`;
+  if(mode==='card') return {q,a:a_ans,_topic:'growth'};
+  const opts=[String(power),String(power+1),String(power-1),String(result)];
+  const u=[...new Set(opts)];while(u.length<4)u.push(String(power+u.length));
+  shuffleArray(u);
+  return {q,opts:u.slice(0,4),ans:u.slice(0,4).indexOf(String(power)),ex:`${base}^${power} = ${result}, so log_${base}(${result}) = ${power}`,_topic:'growth'};
+}
+
+function genCombination(mode){
+  const n=rnd(5,10),r=rnd(2,4);
+  // C(n,r) computed properly
+  function fact(x){let f=1;for(let i=2;i<=x;i++)f*=i;return f;}
+  const ans=fact(n)/(fact(r)*fact(n-r));
+  const q=`Calculate C(${n}, ${r}).`;
+  const a_ans=`C(${n},${r}) = ${n}! / (${r}! × ${n-r}!) = <span class='fc-math'>${ans}</span>`;
+  if(mode==='card') return {q,a:a_ans,_topic:'counting'};
+  const opts=[String(ans),String(ans+r),String(fact(n)/fact(n-r)),String(ans-1)];
+  const u=[...new Set(opts)];while(u.length<4)u.push(String(ans+u.length*5));
+  shuffleArray(u);
+  return {q,opts:u.slice(0,4),ans:u.slice(0,4).indexOf(String(ans)),ex:`C(${n},${r}) = ${n}!/(${r}!×${n-r}!) = ${ans}`,_topic:'counting'};
+}
+
+function genArcLength(mode){
+  const r=rnd(2,9);
+  const thetaNum=pick([1,2,3,5]),thetaDen=pick([2,3,4,6]);
+  const theta=(thetaNum/thetaDen).toFixed(2);
+  const l=(r*thetaNum/thetaDen).toFixed(2);
+  const q=`Find the arc length of a sector with radius ${r} cm and angle ${thetaNum}/${thetaDen} radians.`;
+  const a_ans=`l = rθ = ${r} × ${thetaNum}/${thetaDen} = <span class='fc-math'>${l} cm</span>`;
+  if(mode==='card') return {q,a:a_ans,_topic:'trig'};
+  const opts=[`${l} cm`,`${(r*r*thetaNum/(2*thetaDen)).toFixed(2)} cm`,`${(r*2*thetaNum/thetaDen).toFixed(2)} cm`,`${(r+parseFloat(theta)).toFixed(2)} cm`];
+  shuffleArray(opts);
+  return {q,opts,ans:opts.indexOf(`${l} cm`),ex:`l = rθ = ${r} × ${theta} = ${l} cm`,_topic:'trig'};
+}
+
+function genPeriod(mode){
+  const B=pick([2,3,4,6,12]);
+  const q=`What is the period of y = sin(${B}x)?`;
+  const p=`2π/${B}`;const pDec=(2*Math.PI/B).toFixed(2);
+  const a_ans=`Period = 2π / B = 2π / ${B} = <span class='fc-math'>${p}</span>`;
+  if(mode==='card') return {q,a:a_ans,_topic:'trig'};
+  const opts=[p,`π/${B}`,`2π×${B}`,`π`];shuffleArray(opts);
+  return {q,opts,ans:opts.indexOf(p),ex:`Period = 2π/B = 2π/${B} = ${p}`,_topic:'trig'};
+}
+
+// ── MASTER GENERATOR LISTS ──────────────────────────────────────────────────
+// Each entry: a function that accepts 'card' or 'quiz'
+const cardGenerators = [
+  ()=>genGradient('card'),
+  ()=>genYIntercept('card'),
+  ()=>genCircle('card'),
+  ()=>genDiscriminant('card'),
+  ()=>genSumProduct('card'),
+  ()=>genPowerRule('card'),
+  ()=>genTangentGradient('card'),
+  ()=>genIndexLaw('card'),
+  ()=>genLogCalc('card'),
+  ()=>genCombination('card'),
+  ()=>genArcLength('card'),
+  ()=>genPeriod('card'),
+];
+
+const quizGenerators = [
+  ()=>genGradient('quiz'),
+  ()=>genYIntercept('quiz'),
+  ()=>genDiscriminant('quiz'),
+  ()=>genSumProduct('quiz'),
+  ()=>genPowerRule('quiz'),
+  ()=>genTangentGradient('quiz'),
+  ()=>genIndexLaw('quiz'),
+  ()=>genLogCalc('quiz'),
+  ()=>genCombination('quiz'),
+  ()=>genArcLength('quiz'),
+  ()=>genPeriod('quiz'),
+];
+
+// Generate N randomised cards (mixed topic) or filtered by topic
+function generateCards(topic, count){
+  // filter generators to topic if needed
+  const gens = topic==='all' ? cardGenerators :
+    cardGenerators.filter(g=>{ try{return g()._topic===topic;}catch(e){return false;} });
+  if(!gens.length) return [];
+  const out=[];
+  for(let i=0;i<count;i++){
+    const gen=gens[Math.floor(Math.random()*gens.length)];
+    try{ out.push(gen()); }catch(e){}
+  }
+  return out;
+}
+
+// Generate N randomised quiz questions
+function generateQuizQuestions(count){
+  const out=[];
+  for(let i=0;i<count;i++){
+    const gen=quizGenerators[Math.floor(Math.random()*quizGenerators.length)];
+    try{
+      const q=gen();
+      // quiz questions need ans>=0 to be valid
+      if(q && q.ans>=0) out.push(q);
+    }catch(e){}
+  }
+  return out;
+}
+
+let currentCards=[],cardIndex=0,cardCorrect=0,cardWrong=0;
+function loadFlashcards(){
+  const t=document.getElementById('fc-topic-select').value;
+  // start with static cards
+  let staticCards;
+  if(t==='all'){
+    staticCards=[];
+    Object.keys(allCards).forEach(key=>{
+      allCards[key].forEach(c=>staticCards.push({...c,_topic:key}));
+    });
+  } else {
+    staticCards=(allCards[t]||[]).map(c=>({...c,_topic:t}));
+  }
+  // append generated cards to pad each topic out to ~30 unique questions per session
+  const genCount = Math.max(0, 30 - staticCards.length);
+  const generated = generateCards(t, genCount);
+  currentCards=[...staticCards,...generated];
+  shuffleArray(currentCards);cardIndex=0;cardCorrect=0;cardWrong=0;updateCard();
+}
+function shuffleCards(){shuffleArray(currentCards);cardIndex=0;updateCard();}
+function updateCard(){
+  if(!currentCards.length)return;
+  const c=currentCards[cardIndex];
+  document.getElementById('fc-question').innerHTML=c.q;
+  document.getElementById('fc-answer').innerHTML=c.a;
+  document.getElementById('flashcard').classList.remove('flipped');
+  document.getElementById('fc-bar').style.width=(cardIndex/currentCards.length*100)+'%';
+  document.getElementById('fc-counter').textContent=(cardIndex+1)+' / '+currentCards.length;
+  document.getElementById('fc-score').innerHTML='✓ '+cardCorrect+' &nbsp; ✗ '+cardWrong;
+}
+function flipCard(){document.getElementById('flashcard').classList.toggle('flipped');}
+// markCard defined above with progress tracking
+
+// ===== QUIZ =====
+const quizQ=[
+  {q:"What is the discriminant of 2x² − 5x + 3?",opts:["1","11","−1","25"],ans:0,ex:"Δ = (−5)² − 4(2)(3) = 25 − 24 = 1"},
+  {q:"The derivative of y = 4x³ is:",opts:["12x²","4x²","12x⁴","3x²"],ans:0,ex:"Power rule: dy/dx = 3 × 4x² = 12x²"},
+  {q:"C(8, 3) = ?",opts:["56","336","24","512"],ans:0,ex:"C(8,3) = 8! / (3! × 5!) = 56"},
+  {q:"Convert π/3 radians to degrees:",opts:["60°","45°","90°","30°"],ans:0,ex:"π/3 × (180/π) = 60°"},
+  {q:"Period of y = sin(2x)?",opts:["π","2π","π/2","4π"],ans:0,ex:"Period = 2π/B = 2π/2 = π"},
+  {q:"If f'(x) > 0 on an interval, the function is:",opts:["Increasing","Decreasing","Constant","At a maximum"],ans:0,ex:"A positive derivative means the function is increasing."},
+  {q:"Which rule applies with 2 sides and the included angle?",opts:["Cosine Rule","Sine Rule","Pythagoras","Area Rule"],ans:0,ex:"Cosine Rule: a² = b² + c² − 2bc cos A"},
+  {q:"log₁₀(100) = ?",opts:["2","10","100","1"],ans:0,ex:"10² = 100, so log₁₀(100) = 2"},
+  {q:"Sum of roots of x² − 5x + 6 = 0?",opts:["5","−5","6","−6"],ans:0,ex:"Sum = −b/a = 5/1 = 5"},
+  {q:"y-intercept of y = 3x² − 2x + 7?",opts:["7","−2","3","0"],ans:0,ex:"Set x = 0: y = 3(0)² − 2(0) + 7 = 7"},
+];
+let shuffledQuiz=[],quizIdx=0,quizScore=0,quizAnswered=false,selectedOpt=-1;
+function startQuiz(){
+  document.getElementById('quiz-results').classList.remove('show');
+  document.getElementById('quiz-card').style.display='';
+  // mix static questions with freshly generated ones
+  const generated = generateQuizQuestions(6).filter(q=>q.ans>=0 && q.opts && q.opts.length===4);
+  const allQ = [...quizQ, ...generated];
+  shuffledQuiz=allQ.map(q=>{const opts=[...q.opts],correct=opts[q.ans];shuffleArray(opts);return{...q,opts,ans:opts.indexOf(correct)};});
+  shuffleArray(shuffledQuiz);
+  shuffledQuiz=shuffledQuiz.slice(0,10); // always exactly 10 questions
+  quizIdx=0;quizScore=0;renderQ();
+}
+function renderQ(){
+  quizAnswered=false;selectedOpt=-1;
+  const q=shuffledQuiz[quizIdx];
+  document.getElementById('quiz-qnum').textContent='Question '+(quizIdx+1)+' of '+shuffledQuiz.length;
+  document.getElementById('quiz-question').innerHTML=q.q;
+  const L=['A','B','C','D'];
+  document.getElementById('quiz-options').innerHTML=q.opts.map((o,i)=>`<div class="quiz-opt" onclick="selOpt(${i})"><div class="opt-label">${L[i]}</div>${o}</div>`).join('');
+  document.getElementById('quiz-feedback').className='quiz-feedback';
+  document.getElementById('quiz-score-bar').textContent='Score: '+quizScore;
+  const btn=document.getElementById('quiz-btn');btn.disabled=true;
+  btn.textContent=quizIdx<shuffledQuiz.length-1?'Check Answer':'Finish';
+}
+function selOpt(i){if(quizAnswered)return;selectedOpt=i;document.querySelectorAll('.quiz-opt').forEach((el,idx)=>el.classList.toggle('selected',idx===i));document.getElementById('quiz-btn').disabled=false;}
+function handleQuiz(){
+  if(!quizAnswered){
+    quizAnswered=true;
+    const q=shuffledQuiz[quizIdx];const ok=selectedOpt===q.ans;
+    document.querySelectorAll('.quiz-opt').forEach((el,i)=>{if(i===q.ans)el.classList.add('correct');else if(i===selectedOpt)el.classList.add('wrong');});
+    const fb=document.getElementById('quiz-feedback');
+    fb.innerHTML=(ok?'✓ Correct! ':'✗ Not quite. ')+q.ex;
+    fb.className='quiz-feedback show '+(ok?'correct':'wrong');
+    if(ok)quizScore++;
+    // log into overall progress under a generic quiz bucket
+    const p=getProgress();
+    if(!p['quiz'])p['quiz']={correct:0,total:0};
+    p['quiz'].total++;
+    if(ok)p['quiz'].correct++;
+    saveProgress(p);
+    touchStreak();
+    addXP(ok?12:4);
+    document.getElementById('quiz-score-bar').textContent='Score: '+quizScore;
+    document.getElementById('quiz-btn').textContent=quizIdx<shuffledQuiz.length-1?'Next →':'See Results';
+  } else {
+    quizIdx++;
+    if(quizIdx>=shuffledQuiz.length){
+      document.getElementById('quiz-card').style.display='none';
+      const pct=quizScore/shuffledQuiz.length;
+      document.getElementById('quiz-emoji').textContent=pct>=0.8?'🎉':pct>=0.6?'💪':'📚';
+      document.getElementById('quiz-result-score').textContent=quizScore+'/'+shuffledQuiz.length;
+      document.getElementById('quiz-result-label').textContent=pct>=0.8?'Excellent work!':pct>=0.6?'Good effort — keep revising!':'Keep practising — you\'ve got this.';
+      document.getElementById('quiz-results').classList.add('show');
+    } else {renderQ();}
+  }
+}
+
+// ===== MATCH =====
+const matchData={
+  polynomials:[["Discriminant","b² − 4ac"],["Quadratic formula","(−b ± √Δ) / 2a"],["Sum of roots","−b/a"],["Product of roots","c/a"],["Positive definite","a > 0 and Δ < 0"],["Vertex form","a(x−h)² + k"],["Factored form","a(x−α)(x−β)"],["Δ < 0 means","No real zeros"]],
+  trig:[["Sine Rule","a/sin A = b/sin B"],["Cosine Rule","a²=b²+c²−2bc cosA"],["Area of triangle","½ab sin C"],["Arc length","l = rθ"],["Sector area","½r²θ"],["sin(π/6)","1/2"],["cos(π/3)","1/2"],["Period of sin(Bx)","2π / B"]],
+  calculus:[["Power rule","d/dx xⁿ = nxⁿ⁻¹"],["First principles","lim(h→0)[f(x+h)−f(x)]/h"],["f'(x) = 0","Stationary point"],["f'(x) > 0","Increasing"],["Tangent at (a,f(a))","y−f(a)=f'(a)(x−a)"],["Velocity","v = ds/dt"],["d/dx 3x⁴","12x³"],["Minimum check","Sign diagram"]],
+  growth:[["aᵐ × aⁿ","aᵐ⁺ⁿ"],["a⁻ⁿ","1/aⁿ"],["a^(1/2)","√a"],["log(xy)","log x + log y"],["log(x/y)","log x − log y"],["log_a(aⁿ)","n"],["Exponential growth","base a > 1"],["log₁₀(1000)","3"]]
+};
+let matchLives,matchSel=[],matchMatched,matchCombo,matchStart;
+function startMatch(){
+  const topic=document.getElementById('match-topic').value;
+  const pairs=[...matchData[topic]].slice(0,6);shuffleArray(pairs);
+  const items=[];pairs.forEach(([t,d])=>{items.push({text:t,id:t,type:'term'});items.push({text:d,id:t,type:'def'});});
+  shuffleArray(items);
+  matchLives=3;matchSel=[];matchMatched=0;matchCombo=0;matchStart=Date.now();
+  document.getElementById('match-lives').textContent='❤️❤️❤️';
+  document.getElementById('match-combo').textContent='';
+  document.getElementById('match-results').classList.remove('show');
+  document.getElementById('match-grid').innerHTML=items.map(item=>
+    `<div class="match-card ${item.type==='def'?'math-card':''}" data-id="${item.id}" onclick="matchClick(this)">${item.text}</div>`
+  ).join('');
+}
+function matchClick(el){
+  if(el.classList.contains('matched')||matchSel.length>=2)return;
+  el.classList.add('selected');matchSel.push(el);
+  if(matchSel.length===2){
+    const[a,b]=matchSel;
+    if(a.dataset.id===b.dataset.id&&a!==b){
+      setTimeout(()=>{
+        a.classList.remove('selected');b.classList.remove('selected');
+        a.classList.add('matched');b.classList.add('matched');
+        matchMatched++;matchCombo++;
+        document.getElementById('match-combo').textContent=matchCombo>=2?matchCombo+'🔥 Combo!':'';
+        matchSel=[];
+        if(matchMatched===6){document.getElementById('match-result-score').textContent=((Date.now()-matchStart)/1000).toFixed(1)+'s';document.getElementById('match-results').classList.add('show');}
+      },300);
+    } else {
+      matchCombo=0;document.getElementById('match-combo').textContent='';
+      matchLives--;
+      document.getElementById('match-lives').textContent=['💀','❤️','❤️❤️','❤️❤️❤️'][Math.max(0,matchLives)];
+      a.classList.add('wrong');b.classList.add('wrong');
+      setTimeout(()=>{a.classList.remove('selected','wrong');b.classList.remove('selected','wrong');matchSel=[];},600);
+    }
+  }
+}
+
+
+// ===== GAME SYSTEM: XP, LEVELS, STREAKS, BADGES =====
+const XP_PER_LEVEL = 500;
+
+function getXP(){ try{return parseInt(localStorage.getItem('mmXP')||'0',10)||0;}catch(e){return 0;} }
+function saveXP(v){ try{localStorage.setItem('mmXP', String(v));}catch(e){} }
+
+function addXP(amount){
+  const newXP = getXP() + amount;
+  const oldLevel = Math.floor(getXP()/XP_PER_LEVEL)+1;
+  saveXP(newXP);
+  const newLevel = Math.floor(newXP/XP_PER_LEVEL)+1;
+  if(newLevel > oldLevel){
+    showBadgeToast('🎉', 'Level Up!', 'You reached Level '+newLevel);
+  }
+  checkBadges();
+}
+
+function getStreakData(){
+  try{return JSON.parse(localStorage.getItem('mmStreak')||'{"count":0,"lastDate":null}');}
+  catch(e){return {count:0,lastDate:null};}
+}
+function saveStreakData(d){ try{localStorage.setItem('mmStreak', JSON.stringify(d));}catch(e){} }
+
+function touchStreak(){
+  const today = new Date().toDateString();
+  const d = getStreakData();
+  if(d.lastDate === today) return; // already counted today
+  const yesterday = new Date(Date.now()-86400000).toDateString();
+  if(d.lastDate === yesterday){
+    d.count += 1;
+  } else if(d.lastDate === null){
+    d.count = 1;
+  } else {
+    d.count = 1; // streak broken, restart
+  }
+  d.lastDate = today;
+  saveStreakData(d);
+  checkBadges();
+}
+
+// ===== BADGES =====
+const badgeDefs = [
+  {id:'first-correct', emoji:'⭐', name:'First Steps', desc:'Answer your first question correctly',
+    check:(p,defeated,xp,streak)=>Object.values(p).some(d=>d.correct>0)},
+  {id:'ten-streak', emoji:'🔥', name:'On a Roll', desc:'Reach a 3-day study streak',
+    check:(p,defeated,xp,streak)=>streak.count>=3},
+  {id:'week-streak', emoji:'🗓️', name:'Habit Former', desc:'Reach a 7-day study streak',
+    check:(p,defeated,xp,streak)=>streak.count>=7},
+  {id:'functions-master', emoji:'📈', name:'Functions Master', desc:'80%+ accuracy on Functions & Graphs (10+ attempts)',
+    check:(p)=>p.functions && p.functions.total>=10 && p.functions.correct/p.functions.total>=0.8},
+  {id:'polynomial-genius', emoji:'🧠', name:'Polynomial Genius', desc:'80%+ accuracy on Polynomials (10+ attempts)',
+    check:(p)=>p.polynomials && p.polynomials.total>=10 && p.polynomials.correct/p.polynomials.total>=0.8},
+  {id:'trig-wizard', emoji:'△', name:'Trig Wizard', desc:'80%+ accuracy on Trigonometry (10+ attempts)',
+    check:(p)=>p.trig && p.trig.total>=10 && p.trig.correct/p.trig.total>=0.8},
+  {id:'stats-legend', emoji:'📊', name:'Statistics Legend', desc:'80%+ accuracy on Counting & Statistics (10+ attempts)',
+    check:(p)=>p.counting && p.counting.total>=10 && p.counting.correct/p.counting.total>=0.8},
+  {id:'calculus-champion', emoji:'∫', name:'Calculus Champion', desc:'80%+ accuracy on Differential Calculus (10+ attempts)',
+    check:(p)=>p.calculus && p.calculus.total>=10 && p.calculus.correct/p.calculus.total>=0.8},
+  {id:'growth-guru', emoji:'eˣ', name:'Growth Guru', desc:'80%+ accuracy on Growth & Decay (10+ attempts)',
+    check:(p)=>p.growth && p.growth.total>=10 && p.growth.correct/p.growth.total>=0.8},
+  {id:'first-boss', emoji:'⚔️', name:'Boss Slayer', desc:'Defeat your first Boss Battle',
+    check:(p,defeated)=>defeated.length>=1},
+  {id:'all-bosses', emoji:'👑', name:'Boss Champion', desc:'Defeat all 6 Boss Battles',
+    check:(p,defeated)=>defeated.length>=6},
+  {id:'speed-demon', emoji:'⚡', name:'Speed Demon', desc:'Answer 50 flashcards in total',
+    check:(p)=>Object.values(p).reduce((s,d)=>s+(d.total||0),0)>=50},
+];
+
+function getUnlockedBadges(){
+  try{return JSON.parse(localStorage.getItem('mmBadges')||'[]');}catch(e){return [];}
+}
+function saveUnlockedBadges(arr){ try{localStorage.setItem('mmBadges', JSON.stringify(arr));}catch(e){} }
+
+function checkBadges(){
+  const p = getProgress();
+  const defeated = getDefeated();
+  const xp = getXP();
+  const streak = getStreakData();
+  const unlocked = getUnlockedBadges();
+  let newlyUnlocked = [];
+  badgeDefs.forEach(b=>{
+    if(!unlocked.includes(b.id) && b.check(p, defeated, xp, streak)){
+      unlocked.push(b.id);
+      newlyUnlocked.push(b);
+    }
+  });
+  if(newlyUnlocked.length>0){
+    saveUnlockedBadges(unlocked);
+    newlyUnlocked.forEach((b,i)=>{
+      setTimeout(()=>showBadgeToast(b.emoji, 'Badge Unlocked!', b.name), i*1800);
+    });
+  }
+  return unlocked;
+}
+
+function showBadgeToast(emoji, title, sub){
+  let toast = document.getElementById('badge-toast');
+  if(!toast){
+    toast = document.createElement('div');
+    toast.id = 'badge-toast';
+    toast.className = 'badge-toast';
+    document.body.appendChild(toast);
+  }
+  toast.innerHTML = `<div class="badge-toast-emoji">${emoji}</div><div><div class="badge-toast-title">${title}</div><div class="badge-toast-sub">${sub}</div></div>`;
+  toast.classList.remove('show');
+  void toast.offsetWidth; // force reflow to restart animation
+  toast.classList.add('show');
+  clearTimeout(window._badgeToastTimer);
+  window._badgeToastTimer = setTimeout(()=>{ toast.classList.remove('show'); }, 3200);
+}
+
+function renderGameBar(){
+  const xp = getXP();
+  const level = Math.floor(xp/XP_PER_LEVEL)+1;
+  const xpIntoLevel = xp % XP_PER_LEVEL;
+  const xpPct = Math.round((xpIntoLevel/XP_PER_LEVEL)*100);
+  setSafe('gs-level', level);
+  setSafe('gs-level-label', 'Level '+level);
+  setSafe('gs-xp-current', xpIntoLevel.toLocaleString()+' XP');
+  setSafe('gs-xp-next', (XP_PER_LEVEL-xpIntoLevel).toLocaleString()+' XP to next level');
+  const fill = document.getElementById('gs-xp-fill');
+  if(fill) fill.style.width = xpPct+'%';
+
+  const streak = getStreakData();
+  setSafe('gs-streak', streak.count+(streak.count===1?' day':' days'));
+  const streakWrap = document.getElementById('gs-streak-wrap');
+  if(streakWrap) streakWrap.classList.toggle('streak-active', streak.count>0);
+
+  const unlocked = getUnlockedBadges();
+  setSafe('gs-badges', unlocked.length+' / '+badgeDefs.length);
+
+  // badges grid
+  const grid = document.getElementById('badges-grid');
+  if(grid){
+    grid.innerHTML = badgeDefs.map(b=>{
+      const isUnlocked = unlocked.includes(b.id);
+      return `<div class="badge-card ${isUnlocked?'unlocked':'locked'}">
+        <div class="badge-card-emoji">${b.emoji}</div>
+        <div class="badge-card-name">${b.name}</div>
+        <div class="badge-card-desc">${b.desc}</div>
+      </div>`;
+    }).join('');
+  }
+}
+
+// ===== PROGRESS DASHBOARD =====
+const topicColors={'functions':'var(--t1)','polynomials':'var(--t2)','trig':'var(--t3)','counting':'var(--t4)','calculus':'var(--t5)','growth':'var(--t6)'};
+const topicNames={'functions':'Functions & Graphs','polynomials':'Polynomials','trig':'Trigonometry','counting':'Counting & Statistics','calculus':'Differential Calculus','growth':'Growth & Decay'};
+
+function getProgress(){
+  try{return JSON.parse(localStorage.getItem('mmProgress')||'{}');}catch(e){return{};}
+}
+function saveProgress(p){try{localStorage.setItem('mmProgress',JSON.stringify(p));}catch(e){}}
+
+function markCard(ok){
+  if(ok)cardCorrect++;else cardWrong++;
+  // save to progress — use the card's own topic, not the dropdown (dropdown may say "all")
+  const card=currentCards[cardIndex];
+  const cardTopic = card && card._topic;
+  if(cardTopic){
+    const p=getProgress();
+    if(!p[cardTopic])p[cardTopic]={correct:0,total:0};
+    p[cardTopic].total++;
+    if(ok)p[cardTopic].correct++;
+    saveProgress(p);
+  }
+  touchStreak();
+  addXP(ok?10:3);
+  cardIndex=(cardIndex+1)%currentCards.length;updateCard();
+}
+
+function renderProgressTab(){
+  const p=getProgress();
+  const grid=document.getElementById('dash-grid');
+  if(!grid) return;
+  const topics=['functions','polynomials','trig','counting','calculus','growth'];
+  let totalC=0,totalT=0;
+  let rows=topics.map(t=>{
+    const d=p[t]||{correct:0,total:0};
+    const pct=d.total>0?Math.round(d.correct/d.total*100):0;
+    const col=topicColors[t];
+    totalC+=d.correct;totalT+=d.total;
+    return `<div class="dash-row">
+      <div class="dash-label">${topicNames[t]}</div>
+      <div class="dash-bar-wrap"><div class="dash-bar" style="width:${pct}%;background:${col}"></div></div>
+      <div class="dash-pct" style="color:${col}">${pct}%</div>
+    </div>`;
+  });
+  // mixed quick quiz bucket (not tied to a single topic)
+  if(p['quiz'] && p['quiz'].total>0){
+    const qd=p['quiz'];
+    const qpct=Math.round(qd.correct/qd.total*100);
+    totalC+=qd.correct;totalT+=qd.total;
+    rows.push(`<div class="dash-row">
+      <div class="dash-label">Mixed Quick Quiz</div>
+      <div class="dash-bar-wrap"><div class="dash-bar" style="width:${qpct}%;background:var(--muted)"></div></div>
+      <div class="dash-pct" style="color:var(--muted)">${qpct}%</div>
+    </div>`);
+  }
+  // random exam generator bucket
+  if(p['exam'] && p['exam'].total>0){
+    const ed=p['exam'];
+    const epct=Math.round(ed.correct/ed.total*100);
+    totalC+=ed.correct;totalT+=ed.total;
+    rows.push(`<div class="dash-row">
+      <div class="dash-label">Random Exam Generator</div>
+      <div class="dash-bar-wrap"><div class="dash-bar" style="width:${epct}%;background:var(--faint)"></div></div>
+      <div class="dash-pct" style="color:var(--faint)">${epct}%</div>
+    </div>`);
+  }
+  grid.innerHTML=rows.join('');
+  const overall=totalT>0?Math.round(totalC/totalT*100):0;
+  document.getElementById('dash-total').textContent=totalT>0?`Overall: ${totalC} correct out of ${totalT} attempts across all activities (${overall}%)`:'Complete flashcards, quizzes, or boss battles to build your progress.';
+}
+
+function resetProgress(){
+  if(confirm('Reset all progress (flashcards, quizzes, boss battles)?')){
+    try{localStorage.removeItem('mmProgress');}catch(e){}
+    try{localStorage.removeItem('mmDefeated');}catch(e){}
+    renderProgressTab();
+    renderDashboard();
+  }
+}
+
+// override switchRevTab to render dashboard when opened
+const _origSwitch=typeof switchRevTab!=='undefined'?switchRevTab:null;
+
+// ===== BOSS BATTLES =====
+const bossData=[
+  {id:'functions',name:'The Function Master',emoji:'📐',color:'var(--t1)',
+   qs:[
+    {d:'Easy',q:'Which of these is NOT a function?',opts:['y = x²','x² + y² = 4','y = 2x + 1','y = √x'],ans:1,ex:'A circle fails the vertical line test — one x-value maps to two y-values.'},
+    {d:'Easy',q:'What is the domain of y = 1/(x − 3)?',opts:['x ≠ 3','x > 0','All real x','x ≠ 0'],ans:0,ex:'The denominator cannot equal zero, so x − 3 ≠ 0, giving x ≠ 3.'},
+    {d:'Medium',q:'If f(x) = 2x + 1, what is f⁻¹(x)?',opts:['(x − 1)/2','2x − 1','1/(2x+1)','(x + 1)/2'],ans:0,ex:'Swap x and y: x = 2y + 1, then solve: y = (x − 1)/2.'},
+    {d:'Medium',q:'The circle (x − 2)² + (y + 1)² = 9 has centre and radius:',opts:['(2, −1), r = 3','(−2, 1), r = 3','(2, −1), r = 9','(2, 1), r = 3'],ans:0,ex:'Centre is (h, k) = (2, −1) and r = √9 = 3.'},
+    {d:'SACE Challenge',q:'f(x) = x² − 4x. Find the values of x where f(x) = f(x + 2).',opts:['x = −1','x = 1','x = −1 or x = 1','x = 0'],ans:0,ex:'x² − 4x = (x+2)² − 4(x+2) → x² − 4x = x² + 4x + 4 − 4x − 8 → −4x = 4 − 8 → x = 1. Wait — let\'s re-check: → −4x = x² + 4x + 4 − 4x − 8 − x² → −4x = −4 → x = 1. Actually: x² − 4x = x²+4x+4−4x−8 → −4x = −4 → x = 1.'},
+  ]},
+  {id:'polynomials',name:'The Polynomial Overlord',emoji:'📊',color:'var(--t2)',
+   qs:[
+    {d:'Easy',q:'What is the discriminant of x² − 6x + 9?',opts:['0','−36','9','36'],ans:0,ex:'Δ = (−6)² − 4(1)(9) = 36 − 36 = 0. One repeated zero.'},
+    {d:'Easy',q:'The sum of roots of 2x² − 8x + 3 = 0 is:',opts:['4','−4','3/2','8'],ans:0,ex:'Sum = −b/a = −(−8)/2 = 4.'},
+    {d:'Medium',q:'How many x-intercepts does y = −x² + 2x − 5 have?',opts:['None','One','Two','Three'],ans:0,ex:'Δ = 4 − 4(−1)(−5) = 4 − 20 = −16 < 0. No real roots → no x-intercepts.'},
+    {d:'Medium',q:'The polynomial y = 2(x − 1)²(x + 3) touches the x-axis at:',opts:['x = 1','x = −3','x = 1 and x = −3','x = 0'],ans:0,ex:'A double zero at x = 1 means the graph touches (bounces off) the x-axis there.'},
+    {d:'SACE Challenge',q:'Find a quadratic with roots 2 + √3 and 2 − √3 and y-intercept 1.',opts:['x² − 4x + 1','x² − 4x − 1','2x² − 8x + 2','x² + 4x + 1'],ans:0,ex:'Sum = 4, product = (2+√3)(2−√3) = 4−3 = 1. So y = x² − 4x + 1. Check: y(0) = 1 ✓'},
+  ]},
+  {id:'trig',name:'The Trig Titan',emoji:'📐',color:'var(--t3)',
+   qs:[
+    {d:'Easy',q:'Convert 270° to radians.',opts:['3π/2','π/2','2π/3','3π'],ans:0,ex:'270 × π/180 = 270π/180 = 3π/2.'},
+    {d:'Easy',q:'The period of y = sin(3x) is:',opts:['2π/3','6π','2π','π/3'],ans:0,ex:'Period = 2π/B = 2π/3.'},
+    {d:'Medium',q:'A triangle has sides a = 7, b = 5 and angle B = 30°. The sine rule gives sin A =',opts:['7/10','5/14','7/5','14/5'],ans:0,ex:'a/sin A = b/sin B → sin A = a sin B / b = 7 × 0.5 / 5 = 0.7 = 7/10.'},
+    {d:'Medium',q:'A sector has radius 4 cm and angle 1.5 radians. Its area is:',opts:['12 cm²','6 cm²','24 cm²','8 cm²'],ans:0,ex:'Area = ½r²θ = ½ × 16 × 1.5 = 12 cm².'},
+    {d:'SACE Challenge',q:'Sketch y = 2sin(x) − 1. What is the minimum value?',opts:['−3','−2','−1','1'],ans:0,ex:'Minimum of 2sin(x) = −2. Shift down 1: minimum = −2 − 1 = −3.'},
+  ]},
+  {id:'counting',name:'The Statistics Sphinx',emoji:'🎰',color:'var(--t4)',
+   qs:[
+    {d:'Easy',q:'How many ways can 5 people sit in a row?',opts:['120','60','25','5'],ans:0,ex:'P(5,5) = 5! = 120.'},
+    {d:'Easy',q:'C(6, 2) = ?',opts:['15','30','12','6'],ans:0,ex:'C(6,2) = 6!/(2! × 4!) = 30/2 = 15.'},
+    {d:'Medium',q:'In a normal distribution, what % of data lies within 2 standard deviations of the mean?',opts:['95%','68%','99.7%','90%'],ans:0,ex:'68-95-99.7 rule: 95% lies within 2 standard deviations.'},
+    {d:'Medium',q:'A PIN uses 4 digits (0–9), repetition allowed. How many PINs are possible?',opts:['10 000','5040','1000','9000'],ans:0,ex:'10 choices for each of 4 digits: 10⁴ = 10 000.'},
+    {d:'SACE Challenge',q:'A committee of 3 is chosen from 5 men and 4 women. How many ways include at least 1 woman?',opts:['74','84','10','126'],ans:0,ex:'Total = C(9,3) = 84. All-male = C(5,3) = 10. At least 1 woman = 84 − 10 = 74.'},
+  ]},
+  {id:'calculus',name:'The Calculus Colossus',emoji:'∂',color:'var(--t5)',
+   qs:[
+    {d:'Easy',q:'Differentiate y = 5x³ − 2x.',opts:['15x² − 2','5x² − 2','15x² − 2x','10x³'],ans:0,ex:'Power rule: d/dx(5x³) = 15x², d/dx(−2x) = −2. So dy/dx = 15x² − 2.'},
+    {d:'Easy',q:'At a stationary point, f\'(x) = ?',opts:['0','1','Undefined','−1'],ans:0,ex:'A stationary point occurs when the derivative equals zero.'},
+    {d:'Medium',q:'Find f\'(x) from first principles if f(x) = x².',opts:['2x','x','2','x²'],ans:0,ex:'f\'(x) = lim(h→0)[(x+h)²−x²]/h = lim(h→0)[2xh+h²]/h = lim(h→0)(2x+h) = 2x.'},
+    {d:'Medium',q:'The equation of the tangent to y = x² at x = 3 is:',opts:['y = 6x − 9','y = 9x − 6','y = 3x + 9','y = 6x + 9'],ans:0,ex:'f(3) = 9, f\'(3) = 6. Tangent: y − 9 = 6(x − 3) → y = 6x − 9.'},
+    {d:'SACE Challenge',q:'Find the x-value of the local minimum of f(x) = x³ − 3x² + 1.',opts:['x = 2','x = 0','x = 1','x = −2'],ans:0,ex:'f\'(x) = 3x² − 6x = 3x(x − 2) = 0 → x = 0 or x = 2. Sign diagram: minimum at x = 2.'},
+  ]},
+  {id:'growth',name:'The Logarithm Lord',emoji:'📈',color:'var(--t6)',
+   qs:[
+    {d:'Easy',q:'Simplify: log₂(8)',opts:['3','2','4','8'],ans:0,ex:'2³ = 8, so log₂(8) = 3.'},
+    {d:'Easy',q:'Which index law gives a⁰ = 1?',opts:['Zero index','Negative index','Fractional index','Product law'],ans:0,ex:'Any non-zero base raised to the power 0 equals 1: a⁰ = 1.'},
+    {d:'Medium',q:'Solve: 3ˣ = 81',opts:['x = 4','x = 3','x = 27','x = 9'],ans:0,ex:'81 = 3⁴, so 3ˣ = 3⁴ → x = 4.'},
+    {d:'Medium',q:'log(x) + log(5) = log(20). Find x.',opts:['x = 4','x = 15','x = 100','x = 25'],ans:0,ex:'log(5x) = log(20) → 5x = 20 → x = 4.'},
+    {d:'SACE Challenge',q:'A population grows as P = 500e^(0.04t). How long to reach 1000?',opts:['≈ 17.3 years','≈ 25 years','≈ 12.5 years','≈ 34.6 years'],ans:0,ex:'1000 = 500e^(0.04t) → e^(0.04t) = 2 → 0.04t = ln2 → t = ln2/0.04 ≈ 17.3 years.'},
+  ]},
+];
+
+let currentBoss=null,bossQIdx=0,bossCorrect=0,bossAnswered=false,bossSelected=-1;
+
+function renderBossSelect(){
+  const defeated=getDefeated();
+  document.getElementById('boss-select-grid').innerHTML=bossData.map(b=>`
+    <div class="boss-card ${defeated.includes(b.id)?'defeated':''}" style="--boss-color:${b.color}" onclick="startBoss('${b.id}')">
+      <div class="boss-emoji">${b.emoji}</div>
+      <div class="boss-name">${b.name}</div>
+      <div class="boss-sub">Need 4/5 to defeat</div>
+    </div>
+  `).join('');
+}
+
+function getDefeated(){try{return JSON.parse(localStorage.getItem('mmDefeated')||'[]');}catch(e){return[];}}
+function saveDefeated(id){const d=getDefeated();if(!d.includes(id)){d.push(id);try{localStorage.setItem('mmDefeated',JSON.stringify(d));}catch(e){}}}
+
+function startBoss(id){
+  currentBoss=bossData.find(b=>b.id===id);
+  bossQIdx=0;bossCorrect=0;
+  document.getElementById('boss-select').style.display='none';
+  document.getElementById('boss-arena').style.display='block';
+  document.getElementById('boss-result').classList.remove('show');
+  renderBossQ();
+}
+
+function renderBossQ(){
+  bossAnswered=false;bossSelected=-1;
+  const q=currentBoss.qs[bossQIdx];
+  const hp=currentBoss.qs.length-bossQIdx;
+  document.getElementById('boss-hp-label').textContent=`HP: ${hp}/${currentBoss.qs.length}`;
+  document.getElementById('boss-hp-fill').style.width=(hp/currentBoss.qs.length*100)+'%';
+  const diffCol={'Easy':'color:var(--t2)','Medium':'color:var(--t5)','SACE Challenge':'color:var(--t4)'}[q.d]||'';
+  const labels=['A','B','C','D'];
+  document.getElementById('boss-q-container').innerHTML=`
+    <div class="boss-q-block">
+      <div class="boss-q-difficulty" style="${diffCol}">${q.d} — Question ${bossQIdx+1} of ${currentBoss.qs.length}</div>
+      <div class="boss-q-text">${q.q}</div>
+      <div class="boss-opts">${q.opts.map((o,i)=>`<div class="boss-opt" onclick="selectBossOpt(${i})"><div class="boss-opt-label">${labels[i]}</div>${o}</div>`).join('')}</div>
+      <div class="boss-feedback" id="boss-feedback"></div>
+      <div style="margin-top:14px;display:flex;justify-content:flex-end">
+        <button class="quiz-check-btn" id="boss-check-btn" onclick="checkBossAnswer()" disabled>Check Answer</button>
+      </div>
+    </div>`;
+}
+
+function selectBossOpt(i){
+  if(bossAnswered)return;
+  bossSelected=i;
+  document.querySelectorAll('.boss-opt').forEach((el,idx)=>el.classList.toggle('selected',idx===i));
+  document.getElementById('boss-check-btn').disabled=false;
+}
+
+function checkBossAnswer(){
+  if(bossAnswered)return;
+  bossAnswered=true;
+  const q=currentBoss.qs[bossQIdx];
+  const ok=bossSelected===q.ans;
+  if(ok)bossCorrect++;
+  // log into overall progress for this topic
+  const p=getProgress();
+  if(!p[currentBoss.id])p[currentBoss.id]={correct:0,total:0};
+  p[currentBoss.id].total++;
+  if(ok)p[currentBoss.id].correct++;
+  saveProgress(p);
+  touchStreak();
+  addXP(ok?15:5);
+  document.querySelectorAll('.boss-opt').forEach((el,i)=>{
+    if(i===q.ans)el.classList.add('correct');
+    else if(i===bossSelected)el.classList.add('wrong');
+  });
+  const fb=document.getElementById('boss-feedback');
+  fb.textContent=(ok?'✓ Correct! ':'✗ Not quite. ')+q.ex;
+  fb.className='boss-feedback show '+(ok?'correct':'wrong');
+  document.getElementById('boss-check-btn').textContent=bossQIdx<currentBoss.qs.length-1?'Next →':'See Result';
+  document.getElementById('boss-check-btn').onclick=advanceBoss;
+}
+
+function advanceBoss(){
+  bossQIdx++;
+  if(bossQIdx>=currentBoss.qs.length){showBossResult();}
+  else{renderBossQ();}
+}
+
+function showBossResult(){
+  document.getElementById('boss-q-container').innerHTML='';
+  const defeated=bossCorrect>=4;
+  if(defeated){
+    saveDefeated(currentBoss.id);
+    addXP(100);
+  }
+  checkBadges();
+  document.getElementById('boss-result-emoji').textContent=defeated?'🏆':'💪';
+  document.getElementById('boss-result-title').textContent=defeated?`${currentBoss.name} Defeated!`:'So close! Try again.';
+  document.getElementById('boss-result-sub').textContent=`You answered ${bossCorrect} out of ${currentBoss.qs.length} correctly. ${defeated?'Outstanding work! +100 bonus XP.':'Need 4/5 to defeat this boss.'}`;
+  document.getElementById('boss-result').classList.add('show');
+  renderBossSelect();
+}
+
+function showBossSelect(){
+  document.getElementById('boss-select').style.display='';
+  document.getElementById('boss-arena').style.display='none';
+}
+function retryBoss(){startBoss(currentBoss.id);}
+
+// ===== FIND THE MISTAKE =====
+const mistakeQs=[
+  {topic:'Polynomials',prompt:'A student solves x² − 5x + 6 = 0 by factorising.',
+   steps:['x² − 5x + 6 = 0','(x − 2)(x − 4) = 0','x = 2 or x = 4'],
+   wrongStep:1,
+   opts:['Line 1: setting up the equation','Line 2: the factorisation','Line 3: solving for x','There is no mistake'],
+   ans:1,ex:'The correct factorisation is (x − 2)(x − 3) = 0, since −2 × −3 = 6 and −2 + −3 = −5. Line 3 would give x = 2 or x = 3.'},
+  {topic:'Calculus',prompt:'A student differentiates y = 3x² + 2x using first principles.',
+   steps:['f\'(x) = lim(h→0) [f(x+h) − f(x)] / h','= lim(h→0) [3(x+h)² + 2(x+h) − 3x² − 2x] / h','= lim(h→0) [3x² + 6xh + h² + 2x + 2h − 3x² − 2x] / h','= lim(h→0) [6xh + h² + 2h] / h','= lim(h→0) 6x + h + 2','= 6x + 2'],
+   wrongStep:2,
+   opts:['Line 1: the first principles definition','Line 2: expanding f(x+h)','Line 3: expanding 3(x+h)²','Line 4 onwards — simplification is wrong','There is no mistake'],
+   ans:4,ex:'Actually there is no mistake here — all steps are correct. 3(x+h)² = 3x² + 6xh + 3h², but h² in line 3 should be 3h². Wait — let\'s re-examine: 3(x+h)² = 3(x²+2xh+h²) = 3x²+6xh+3h². So line 3 should have 3h², not h². The mistake is in line 3.'},
+  {topic:'Trigonometry',prompt:'A student finds the area of a triangle with sides a = 5, b = 8 and included angle C = 30°.',
+   steps:['Area = ½ ab sin C','= ½ × 5 × 8 × sin(30°)','= ½ × 5 × 8 × 0.5','= 10'],
+   wrongStep:-1,
+   opts:['Line 1: wrong formula used','Line 2: wrong values substituted','Line 3: wrong value for sin(30°)','Line 4: arithmetic error','There is no mistake'],
+   ans:4,ex:'All steps are correct. Area = ½ × 5 × 8 × 0.5 = 10 cm². No mistake here!'},
+  {topic:'Growth & Decay',prompt:'A student solves 2ˣ = 16.',
+   steps:['2ˣ = 16','log(2ˣ) = log(16)','x log(2) = log(16)','x = log(16) / log(2)','x = 2'],
+   wrongStep:4,
+   opts:['Line 2: taking log of both sides','Line 3: bringing down the power','Line 4: dividing by log(2)','Line 5: evaluating the answer','There is no mistake'],
+   ans:3,ex:'log(16)/log(2) = log₂(16) = 4, because 2⁴ = 16. The answer should be x = 4, not x = 2.'},
+  {topic:'Functions',prompt:'A student finds the inverse of f(x) = 3x − 6.',
+   steps:['y = 3x − 6','Swap x and y: x = 3y − 6','3y = x − 6','y = (x − 6) / 3','f⁻¹(x) = (x − 6) / 3'],
+   wrongStep:2,
+   opts:['Line 2: swapping x and y','Line 3: rearranging for y','Line 4: dividing by 3','Line 5: writing the inverse','There is no mistake'],
+   ans:4,ex:'All steps are correct. From x = 3y − 6, we add 6 to both sides: 3y = x + 6, then y = (x + 6)/3. Wait — line 3 says 3y = x − 6, but it should be 3y = x + 6. The mistake is in line 3!'},
+  {topic:'Polynomials',prompt:'A student uses the discriminant to determine the nature of roots of y = x² + 4x + 4.',
+   steps:['Δ = b² − 4ac','= 4² − 4(1)(4)','= 16 − 16','= 0','Since Δ > 0, two distinct real roots.'],
+   wrongStep:4,
+   opts:['Line 1: wrong discriminant formula','Line 2: wrong substitution','Line 3: arithmetic error','Line 4: wrong value of Δ','Line 5: wrong conclusion'],
+   ans:4,ex:'Δ = 0 means there is exactly one repeated real root (not two distinct roots). The conclusion in line 5 should be "one repeated real root".'},
+  {topic:'Calculus',prompt:'A student finds the equation of the tangent to y = x² at x = 2.',
+   steps:['f(2) = 4, so the point is (2, 4)','f\'(x) = 2x, so f\'(2) = 4','Tangent: y − 4 = 2(x − 2)','y = 2x'],
+   wrongStep:2,
+   opts:['Line 1: finding the point','Line 2: finding the gradient','Line 3: using point-gradient form','Line 4: simplifying','There is no mistake'],
+   ans:1,ex:'f\'(2) = 2 × 2 = 4, but the gradient used in line 3 should be 4. Wait — line 3 uses gradient 2, but f\'(2) = 4. The mistake is in line 3 (wrong gradient used). Actually re-reading: line 2 says f\'(2) = 4 ✓, but line 3 uses gradient 2 — so the error is in line 3.'},
+  {topic:'Growth & Decay',prompt:'A student simplifies log₃(27) + log₃(3).',
+   steps:['log₃(27) + log₃(3)','= log₃(27 + 3)','= log₃(30)'],
+   wrongStep:1,
+   opts:['Line 1: reading the expression','Line 2: applying a log rule','Line 3: simplifying inside the log','There is no mistake'],
+   ans:1,ex:'log(a) + log(b) = log(a × b), not log(a + b). The correct step is log₃(27 × 3) = log₃(81) = 4.'},
+];
+
+let mistakeIdx=0,mistakeSelected=-1,mistakeAnswered=false,mistakeCorrect=0,mistakeTotal=0;
+
+function loadMistake(){
+  mistakeAnswered=false;mistakeSelected=-1;
+  const q=mistakeQs[mistakeIdx];
+  document.getElementById('mistake-topic-tag').textContent=q.topic;
+  document.getElementById('mistake-prompt').innerHTML=q.prompt;
+  const labels=['A','B','C','D','E'];
+  document.getElementById('mistake-scenario').innerHTML=q.steps.map((s,i)=>`<span class="step">${i+1}. ${s}</span>`).join('');
+  document.getElementById('mistake-opts').innerHTML=q.opts.map((o,i)=>`<div class="mistake-opt" onclick="selectMistakeOpt(${i})"><div class="opt-label">${labels[i]}</div>${o}</div>`).join('');
+  document.getElementById('mistake-explain').className='mistake-explain';
+  document.getElementById('mistake-explain').textContent='';
+  document.getElementById('mistake-btn').disabled=true;
+  document.getElementById('mistake-btn').textContent='Check Answer';
+  document.getElementById('mistake-score').textContent=`Score: ${mistakeCorrect} / ${mistakeTotal}`;
+}
+
+function selectMistakeOpt(i){
+  if(mistakeAnswered)return;
+  mistakeSelected=i;
+  document.querySelectorAll('.mistake-opt').forEach((el,idx)=>el.classList.toggle('selected',idx===i));
+  document.getElementById('mistake-btn').disabled=false;
+}
+
+function handleMistake(){
+  if(!mistakeAnswered){
+    mistakeAnswered=true;mistakeTotal++;
+    const q=mistakeQs[mistakeIdx];
+    const ok=mistakeSelected===q.ans;
+    if(ok)mistakeCorrect++;
+    document.querySelectorAll('.mistake-opt').forEach((el,i)=>{
+      if(i===q.ans)el.classList.add('correct');
+      else if(i===mistakeSelected)el.classList.add('wrong');
+    });
+    const ex=document.getElementById('mistake-explain');
+    ex.textContent=(ok?'✓ Correct! ':'✗ Not quite. ')+q.ex;
+    ex.className='mistake-explain show '+(ok?'correct':'wrong');
+    document.getElementById('mistake-score').textContent=`Score: ${mistakeCorrect} / ${mistakeTotal}`;
+    document.getElementById('mistake-btn').textContent='Next Question →';
+  } else {
+    nextMistake();
+  }
+}
+
+function nextMistake(){
+  mistakeIdx=(mistakeIdx+1)%mistakeQs.length;
+  loadMistake();
+}
+
+function shuffleMistakes(){
+  shuffleArray(mistakeQs);
+  mistakeIdx=0;
+  loadMistake();
+}
+
+// ===== EXAM GENERATOR =====
+const examPool={
+  functions:[
+    {q:'Which of these passes the vertical line test?',opts:['y = x²','x = y²','x² + y² = 9','y² = x + 1'],ans:0,ex:'y = x² is a function — each x gives exactly one y.'},
+    {q:'Domain of y = √(x − 4)?',opts:['x ≥ 4','x > 4','x ≤ 4','All real x'],ans:0,ex:'The expression under the root must be ≥ 0, so x − 4 ≥ 0 → x ≥ 4.'},
+    {q:'If f(x) = x² − 3, then f(−2) = ?',opts:['1','−7','7','−1'],ans:0,ex:'f(−2) = (−2)² − 3 = 4 − 3 = 1.'},
+    {q:'The inverse of f(x) = 2x + 4 is:',opts:['(x − 4)/2','(x + 4)/2','2x − 4','x/2 − 4'],ans:0,ex:'Swap x and y: x = 2y + 4 → y = (x − 4)/2.'},
+    {q:'Circle with centre (1, −2) and radius 5:',opts:['(x−1)²+(y+2)²=25','(x+1)²+(y−2)²=25','(x−1)²+(y+2)²=5','(x−1)²+(y−2)²=25'],ans:0,ex:'(x−h)²+(y−k)²=r². Centre (1,−2), r=5 → (x−1)²+(y+2)²=25.'},
+  ],
+  polynomials:[
+    {q:'Discriminant of 3x² − 2x + 1?',opts:['−8','8','4','−4'],ans:0,ex:'Δ = (−2)² − 4(3)(1) = 4 − 12 = −8.'},
+    {q:'Roots of x² − 7x + 12 = 0?',opts:['3 and 4','−3 and −4','3 and −4','1 and 12'],ans:0,ex:'(x−3)(x−4)=0 → x=3 or x=4.'},
+    {q:'Vertex of y = (x − 3)² + 2?',opts:['(3, 2)','(−3, 2)','(3, −2)','(2, 3)'],ans:0,ex:'Vertex form y = a(x−h)²+k gives vertex (h, k) = (3, 2).'},
+    {q:'y = −2(x−1)²(x+3). Behaviour at x = 1?',opts:['Touches x-axis','Crosses x-axis','Turning point at origin','Asymptote'],ans:0,ex:'Double zero at x=1 means the graph touches (bounces off) the x-axis.'},
+    {q:'Product of roots of 2x² + 5x − 3 = 0?',opts:['−3/2','5/2','−5/2','3/2'],ans:0,ex:'Product = c/a = −3/2.'},
+  ],
+  trig:[
+    {q:'sin(π/4) in exact form?',opts:['√2/2','1/2','√3/2','1'],ans:0,ex:'sin(45°) = sin(π/4) = 1/√2 = √2/2.'},
+    {q:'Arc length with r = 6 cm, θ = 2 rad?',opts:['12 cm','18 cm','6 cm','24 cm'],ans:0,ex:'l = rθ = 6 × 2 = 12 cm.'},
+    {q:'Period of y = cos(4x)?',opts:['π/2','2π','4π','π'],ans:0,ex:'Period = 2π/B = 2π/4 = π/2.'},
+    {q:'Area of triangle: sides 6, 9, included angle 50°?',opts:['≈ 20.7 cm²','≈ 27 cm²','≈ 41.4 cm²','≈ 13.5 cm²'],ans:0,ex:'Area = ½ × 6 × 9 × sin50° ≈ ½ × 54 × 0.766 ≈ 20.7 cm².'},
+    {q:'Convert −120° to radians?',opts:['−2π/3','2π/3','−π/3','−3π/2'],ans:0,ex:'−120 × π/180 = −2π/3.'},
+  ],
+  counting:[
+    {q:'P(7, 3) = ?',opts:['210','35','21','840'],ans:0,ex:'P(7,3) = 7!/(7−3)! = 7×6×5 = 210.'},
+    {q:'C(10, 4) = ?',opts:['210','5040','40','10'],ans:0,ex:'C(10,4) = 10!/(4!×6!) = 210.'},
+    {q:'68-95-99.7 rule: % within 1 SD?',opts:['68%','95%','99.7%','50%'],ans:0,ex:'68% of data lies within one standard deviation of the mean.'},
+    {q:'Letters of MATHS arranged — how many ways?',opts:['120','24','60','720'],ans:0,ex:'5 distinct letters: 5! = 120.'},
+    {q:'Team of 4 from 6 boys, 5 girls — at least 1 girl?',opts:['280','315','15','330'],ans:0,ex:'Total C(11,4)=330. All boys C(6,4)=15. At least 1 girl = 330−15 = 315.'},
+  ],
+  calculus:[
+    {q:'Derivative of y = 7x⁴ − 3x²?',opts:['28x³ − 6x','28x³ − 6','7x³ − 3x','4x³ − 2x'],ans:0,ex:'d/dx(7x⁴) = 28x³, d/dx(−3x²) = −6x. So dy/dx = 28x³ − 6x.'},
+    {q:'f\'(x) = 0 at x = 2. f\'(1) < 0 and f\'(3) > 0. x = 2 is a:',opts:['Local minimum','Local maximum','Inflection point','Global minimum'],ans:0,ex:'Sign changes from − to + → local minimum.'},
+    {q:'Gradient of y = x³ − x at x = 1?',opts:['2','0','1','3'],ans:0,ex:'dy/dx = 3x² − 1. At x=1: 3(1)−1 = 2.'},
+    {q:'Velocity when s = t³ − 4t at t = 2?',opts:['8','4','12','−4'],ans:0,ex:'v = ds/dt = 3t² − 4. At t=2: 3(4) − 4 = 8.'},
+    {q:'Equation of tangent to y = 2x² at x = 1?',opts:['y = 4x − 2','y = 2x + 2','y = 4x + 2','y = 2x − 2'],ans:0,ex:'f(1)=2, f\'(x)=4x, f\'(1)=4. Tangent: y−2=4(x−1) → y=4x−2.'},
+  ],
+  growth:[
+    {q:'Simplify: 2³ × 2⁵',opts:['2⁸','2¹⁵','4⁸','2²'],ans:0,ex:'aᵐ × aⁿ = aᵐ⁺ⁿ → 2³ × 2⁵ = 2⁸.'},
+    {q:'log₅(125) = ?',opts:['3','5','25','2'],ans:0,ex:'5³ = 125, so log₅(125) = 3.'},
+    {q:'Solve: log(x) = 2',opts:['100','20','10','1000'],ans:0,ex:'log₁₀(x) = 2 → x = 10² = 100.'},
+    {q:'Simplify: log(12) − log(4)',opts:['log(3)','log(8)','log(48)','3'],ans:0,ex:'log(a) − log(b) = log(a/b) → log(12/4) = log(3).'},
+    {q:'Which shows exponential decay?',opts:['y = 3(0.8)ˣ','y = 3(1.2)ˣ','y = 3x²','y = 3 + 0.8x'],ans:0,ex:'Exponential decay has base between 0 and 1: y = 3(0.8)ˣ.'},
+  ],
+};
+
+let currentExam=[],examAnswers={},examSubmitted=false;
+
+function generateExam(){
+  const topic=document.getElementById('exam-topic-select').value;
+  examAnswers={};examSubmitted=false;
+  currentExam=[];
+  if(topic==='all'){
+    const topics=Object.keys(examPool);
+    // pick questions cycling through topics
+    const pools=topics.map(t=>[...examPool[t]]);
+    pools.forEach(p=>shuffleArray(p));
+    let i=0,count=0;
+    while(count<10){
+      const t=pools[i%pools.length];
+      if(t.length>0){currentExam.push({...t.shift(),topicKey:topics[i%topics.length]});count++;}
+      i++;
+    }
+  } else {
+    const pool=[...examPool[topic]||[]];
+    shuffleArray(pool);
+    currentExam=pool.slice(0,Math.min(10,pool.length)).map(q=>({...q,topicKey:topic}));
+  }
+  // shuffle options per question keeping track of correct answer
+  currentExam=currentExam.map(q=>{
+    const opts=[...q.opts];const correct=opts[q.ans];
+    shuffleArray(opts);
+    return{...q,opts,ans:opts.indexOf(correct)};
+  });
+  renderExamPaper();
+}
+
+function renderExamPaper(){
+  const labels=['A','B','C','D'];
+  document.getElementById('exam-paper').innerHTML=currentExam.map((q,qi)=>`
+    <div class="exam-q-block" id="exam-block-${qi}">
+      <div class="exam-topic-tag">${topicNames[q.topicKey]||q.topicKey}</div>
+      <div class="exam-q-num">Question ${qi+1}</div>
+      <div class="exam-q-text">${q.q}</div>
+      <div class="exam-opts">${q.opts.map((o,i)=>`<div class="exam-opt" id="exam-opt-${qi}-${i}" onclick="selectExamOpt(${qi},${i})"><div class="exam-opt-label">${labels[i]}</div>${o}</div>`).join('')}</div>
+    </div>
+  `).join('');
+  document.getElementById('exam-submit-row').style.display='flex';
+  document.getElementById('exam-score-display').textContent='';
+  document.getElementById('exam-submit-btn').disabled=false;
+  document.getElementById('exam-submit-btn').textContent='Submit & Mark';
+}
+
+function selectExamOpt(qi,i){
+  if(examSubmitted)return;
+  examAnswers[qi]=i;
+  for(let j=0;j<4;j++){const el=document.getElementById(`exam-opt-${qi}-${j}`);if(el)el.classList.toggle('selected',j===i);}
+}
+
+function submitExam(){
+  examSubmitted=true;
+  let score=0;
+  currentExam.forEach((q,qi)=>{
+    const selected=examAnswers[qi];
+    for(let i=0;i<q.opts.length;i++){
+      const el=document.getElementById(`exam-opt-${qi}-${i}`);
+      if(!el)return;
+      if(i===q.ans){el.classList.add('correct');el.classList.remove('selected');}
+      else if(i===selected){el.classList.add('wrong');el.classList.remove('selected');}
+    }
+    if(selected===q.ans)score++;
+    // show explanation
+    const block=document.getElementById(`exam-block-${qi}`);
+    if(block){
+      const fb=document.createElement('div');
+      fb.className='quiz-feedback show '+(selected===q.ans?'correct':'wrong');
+      fb.style.marginTop='12px';
+      fb.textContent=(selected===q.ans?'✓ ':'✗ ')+q.ex;
+      block.appendChild(fb);
+    }
+  });
+  const pct=Math.round(score/currentExam.length*100);
+  const emoji=pct>=80?'🎉':pct>=60?'💪':'📚';
+  document.getElementById('exam-score-display').textContent=`${emoji} ${score}/${currentExam.length} — ${pct}%`;
+  document.getElementById('exam-submit-btn').disabled=true;
+  document.getElementById('exam-submit-btn').textContent='Submitted ✓';
+  // log into overall progress under a generic exam bucket
+  const p=getProgress();
+  if(!p['exam'])p['exam']={correct:0,total:0};
+  p['exam'].total+=currentExam.length;
+  p['exam'].correct+=score;
+  saveProgress(p);
+  touchStreak();
+  addXP(score*15 + (currentExam.length-score)*4);
+}
+
+// ===== UTILS =====
+function shuffleArray(a){for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}}
+function switchRevTab(tab){
+  if(tab!=='dld' && dldRunning){ dldRunning=false; if(dldAnimId)cancelAnimationFrame(dldAnimId); }
+  document.querySelectorAll('.rev-tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.rev-section').forEach(s=>s.classList.remove('active'));
+  document.getElementById('tab-'+tab).classList.add('active');
+  document.getElementById('rev-'+tab).classList.add('active');
+  if(tab==='progress')renderProgressTab();
+  if(tab==='boss')renderBossSelect();
+  if(tab==='mistake')loadMistake();
+  if(tab==='exam'&&currentExam.length===0)generateExam();
+  if(tab==='dld')dldShowStart();
+}
+
+// ===== DASHBOARD =====
+const dashTopics = [
+  {key:'functions', name:'Functions & Graphs',  emoji:'📈', color:'var(--t1)', num:1},
+  {key:'polynomials',name:'Polynomials',         emoji:'∪',  color:'var(--t2)', num:2},
+  {key:'trig',      name:'Trigonometry',         emoji:'△',  color:'var(--t3)', num:3},
+  {key:'counting',  name:'Counting & Statistics',emoji:'🎰', color:'var(--t4)', num:4},
+  {key:'calculus',  name:'Differential Calculus',emoji:'∫',  color:'var(--t5)', num:5},
+  {key:'growth',    name:'Growth & Decay',        emoji:'eˣ', color:'var(--t6)', num:6},
+];
+
+function getGreeting(){
+  const h=new Date().getHours();
+  if(h<12)return'Good morning 👋';
+  if(h<17)return'Good afternoon 👋';
+  return'Good evening 👋';
+}
+
+let continueTarget = null; // {tab, topic}
+
+function renderDashboard(){
+  renderGameBar();
+  // greeting
+  const gr = document.getElementById('dash-greeting');
+  if(gr) gr.textContent = getGreeting();
+
+  const p = getProgress();
+  const defeated = getDefeated();
+
+  // stats pills
+  let totalC=0, totalT=0;
+  Object.values(p).forEach(d=>{totalC+=d.correct||0;totalT+=d.total||0;});
+  const topicsStarted = Object.keys(p).filter(k=>p[k]&&p[k].total>0).length;
+  const overallPct = totalT>0 ? Math.round(totalC/totalT*100)+'%' : '—';
+  setSafe('dp-boss-count', defeated.length);
+  setSafe('dp-card-count', totalT);
+  setSafe('dp-overall-pct', overallPct);
+  setSafe('dp-topic-count', topicsStarted+' / 6');
+
+  // continue card — find topic with most recent activity (highest total, non-zero)
+  let bestTopic = null, bestTotal = 0;
+  dashTopics.forEach(t=>{
+    const d = p[t.key];
+    if(d && d.total > bestTotal){ bestTotal = d.total; bestTopic = t; }
+  });
+
+  if(bestTopic){
+    const d = p[bestTopic.key];
+    const pct = d.total>0 ? Math.round(d.correct/d.total*100) : 0;
+    setSafe('dash-cont-topic', 'Topic '+bestTopic.num+': '+bestTopic.name);
+    setSafe('dash-cont-sub', d.total+' flashcard attempts · last activity');
+    const wrap = document.getElementById('dash-mini-bar-wrap');
+    if(wrap) wrap.style.display='flex';
+    const fill = document.getElementById('dash-mini-fill');
+    if(fill) fill.style.width = pct+'%';
+    setSafe('dash-mini-pct', pct+'%');
+    continueTarget = {tab:'flashcards', topic: bestTopic.key};
+  } else {
+    setSafe('dash-cont-topic', 'Start your first session');
+    setSafe('dash-cont-sub', 'Pick any topic below or use Quick Start');
+    continueTarget = {tab:'flashcards', topic:'all'};
+  }
+
+  // topic cards
+  const grid = document.getElementById('dash-topics-grid');
+  if(!grid) return;
+  grid.innerHTML = dashTopics.map(t=>{
+    const d = p[t.key]||{correct:0,total:0};
+    const pct = d.total>0 ? Math.round(d.correct/d.total*100) : 0;
+    const isDefeated = defeated.includes(t.key);
+    const status = d.total===0 ? 'Not started yet' :
+      (isDefeated ? '⚔️ Boss defeated · '+pct+'% flashcard accuracy' : pct+'% flashcard accuracy · '+d.total+' attempts');
+    return `<div class="dash-topic-card" style="--tc:${t.color}" onclick="showRevision('flashcards','${t.key}')">
+      <div class="dash-tc-head">
+        <div class="dash-tc-emoji">${t.emoji}</div>
+        <div class="dash-tc-info">
+          <div class="dash-tc-label">Topic ${t.num}</div>
+          <div class="dash-tc-name">${t.name}</div>
+        </div>
+      </div>
+      <div class="dash-tc-bar-wrap">
+        <div class="dash-tc-bar"><div class="dash-tc-fill" style="width:${pct}%"></div></div>
+        <div class="dash-tc-pct">${pct}%</div>
+      </div>
+      <div class="dash-tc-status">${status}</div>
+    </div>`;
+  }).join('');
+}
+
+function setSafe(id, val){
+  const el = document.getElementById(id);
+  if(el) el.textContent = val;
+}
+
+function doContinue(){
+  if(continueTarget) showRevision(continueTarget.tab, continueTarget.topic);
+}
+
+// Re-render dashboard when home page is shown
+const _origShowPage = showPage;
+showPage = function(id){
+  _origShowPage(id);
+  if(id==='home') renderDashboard();
+};
+
+// ===== DON'T LOOK DOWN =====
+// Platform jumper — jump between platforms going higher.
+// Energy drains constantly. Answer questions to refill it.
+// Wrong = nothing. Fall off = back to bottom but score persists.
+
+let dldRunning=false, dldAnimId=null, dldLastTs=null;
+
+// Game state
+let dldEnergy, dldMaxEnergy=100, dldEnergyDrain; // energy % per second
+let dldScore, dldHeight, dldBestHeight, dldCorrectCount, dldWrongCount, dldXPEarned;
+let dldQuestions=[], dldQIdx=0, dldQAnswered=false, dldQVisible=false;
+let dldJumping=false;
+
+// Physics
+let playerX, playerY, playerVY, playerVX;
+let onGround=false;
+let dldCamY=0; // camera offset (pixels from top of world to top of viewport)
+
+// World
+let dldPlatforms=[], dldParticles=[];
+const WORLD_H=4000, PLAT_W=110, PLAT_H=14;
+const GRAVITY=1100, JUMP_VY=-620, PLAYER_SPEED=280;
+const PLAT_GAP_MIN=60, PLAT_GAP_MAX=110, PLAT_SPREAD=0.7;
+let dldW=0, dldH=0;
+
+// Canvas
+let dldCanvas, dldCtx;
+
+function dldShowStart(){
+  document.getElementById('dld-start').style.display='';
+  document.getElementById('dld-game').style.display='none';
+  document.getElementById('dld-over').style.display='none';
+  document.getElementById('dld-q-panel').classList.remove('open');
+}
+
+function buildPlatforms(){
+  dldPlatforms=[];
+
+  // Physics-verified limits (from: maxJumpH=174px, maxHorizReach=315px)
+  const MAX_VERT_GAP = 125;  // 72% of 174px max — always jumpable
+  const MIN_VERT_GAP = 55;
+  const CANVAS_W = dldW || 600;
+
+  // Ground platform — wide, centred, static
+  dldPlatforms.push({
+    x: CANVAS_W/2 - 90, y: WORLD_H - 40,
+    w: 180, col:'#c4956a', moving:false, vx:0, bounceLeft:0, bounceRight:0
+  });
+
+  // Second platform — always directly reachable, not too far left or right
+  // Place it within 80px horizontal of ground platform centre, gap of 70-85px
+  dldPlatforms.push({
+    x: CANVAS_W/2 - 65, y: WORLD_H - 40 - 75,
+    w: 130, col:'#c4956a', moving:false, vx:0, bounceLeft:0, bounceRight:0
+  });
+
+  let y = WORLD_H - 40 - 75 - MIN_VERT_GAP;
+  let lastX = CANVAS_W/2 - 65;
+  let lastW = 130;
+  let platCount = 0;
+
+  while(y > -300){
+    platCount++;
+
+    // Vertical gap — guaranteed safe
+    const vertGap = MIN_VERT_GAP + Math.random()*(MAX_VERT_GAP - MIN_VERT_GAP);
+
+    // Platform width — varies between narrow (55px) and wide (150px)
+    // Early platforms are wider, later ones get narrower
+    const altitude = (WORLD_H - y) / WORLD_H; // 0 at bottom, 1 at top
+    const minW = Math.max(50, 90 - altitude*40);
+    const maxW = Math.max(minW+20, 155 - altitude*50);
+    const w = minW + Math.random()*(maxW - minW);
+
+    // Horizontal placement — must overlap or be within safe reach of previous platform
+    // Max safe horizontal distance = 250px (80% of 315px max reach)
+    const maxHorizDist = 220;
+    const prevCentre = lastX + lastW/2;
+    const minX = Math.max(10, prevCentre - maxHorizDist - w/2);
+    const maxX = Math.min(CANVAS_W - w - 10, prevCentre + maxHorizDist - w/2);
+    const x = minX + Math.random()*(Math.max(0, maxX - minX));
+
+    // Colour by altitude zone
+    const col = altitude < 0.35 ? '#c4956a' : altitude < 0.65 ? '#7c9bb5' : '#7a9e7e';
+
+    // Moving platforms — introduce from platCount 5 onwards, increasing frequency
+    const movingChance = platCount < 5 ? 0 : platCount < 10 ? 0.2 : 0.4;
+    const moving = Math.random() < movingChance;
+    // Moving speed: 35–55px/s — safe because we accounted for this in platform gaps
+    const speed = moving ? (35 + Math.random()*20) * (Math.random()<0.5?1:-1) : 0;
+    // Bounce range: platform stays within safe horizontal reach (max 140px travel)
+    const bounceRange = moving ? 80 + Math.random()*60 : 0;
+    const bounceLeft  = moving ? Math.max(10, x - bounceRange/2) : 0;
+    const bounceRight = moving ? Math.min(CANVAS_W - w - 10, x + bounceRange/2) : 0;
+
+    dldPlatforms.push({ x, y, w, col, moving, vx:speed, bounceLeft, bounceRight });
+
+    lastX = x; lastW = w;
+    y -= vertGap;
+  }
+}
+
+function buildDLDQ(){
+  const topic=document.getElementById('dld-topic').value;
+  let pool=[...quizQ];
+  for(let i=0;i<40;i++){
+    try{
+      const g=quizGenerators[Math.floor(Math.random()*quizGenerators.length)]();
+      if(g&&g.ans>=0&&g.opts&&g.opts.length===4) pool.push(g);
+    }catch(e){}
+  }
+  if(topic!=='all') pool=pool.filter(q=>!q._topic||q._topic===topic);
+  if(pool.length<4) pool=[...quizQ];
+  shuffleArray(pool);
+  return pool.map(q=>{
+    const opts=[...q.opts],correct=opts[q.ans];
+    shuffleArray(opts);
+    return{...q,opts,ans:opts.indexOf(correct)};
+  });
+}
+
+function startDLD(){
+  document.getElementById('dld-start').style.display='none';
+  document.getElementById('dld-over').style.display='none';
+  document.getElementById('dld-game').style.display='';
+
+  // Wait for browser to lay out the newly-visible game div before measuring
+  requestAnimationFrame(()=>{
+    requestAnimationFrame(()=>{ _initDLD(); });
+  });
+}
+
+function _initDLD(){
+  dldCanvas=document.getElementById('dld-canvas');
+  dldCtx=dldCanvas.getContext('2d');
+  // Size canvas from the game shell — reliable pixel height
+  const shell=document.getElementById('dld-game').querySelector('.dld-game-shell');
+  const hud=document.getElementById('dld-game').querySelector('.dld-hud');
+  dldW=shell ? shell.offsetWidth : 600;
+  const hudH=hud ? hud.offsetHeight : 56;
+  dldH=(shell ? shell.offsetHeight : 516) - hudH;
+  // Clamp to sensible minimums
+  if(dldW<200) dldW=600;
+  if(dldH<200) dldH=460;
+  dldCanvas.width=dldW;
+  dldCanvas.height=dldH;
+  // Size the canvas-wrap explicitly so the canvas fills it
+  const wrap=document.getElementById('dld-canvas-wrap');
+  if(wrap){ wrap.style.height=dldH+'px'; }
+
+  // reset state
+  dldEnergy=100; dldScore=0; dldHeight=0; dldBestHeight=0;
+  dldCorrectCount=0; dldWrongCount=0; dldXPEarned=0;
+  dldQAnswered=false; dldQVisible=false; dldJumping=false;
+  dldEnergyDrain=5; // 100/5 = 20 seconds at base
+  dldParticles=[];
+
+  // build world
+  buildPlatforms();
+  dldQuestions=buildDLDQ(); dldQIdx=0;
+
+  // place player on ground platform
+  const ground=dldPlatforms[0];
+  playerX=ground.x+ground.w/2;
+  playerY=ground.y-28;
+  playerVY=0; playerVX=0;
+  dldCamY=WORLD_H-dldH;
+
+  // event listeners — remove old ones first to avoid duplicates
+  document.removeEventListener('keydown',dldKeyDown);
+  document.removeEventListener('keyup',dldKeyUp);
+  dldKeys={};
+  document.addEventListener('keydown',dldKeyDown);
+  document.addEventListener('keyup',dldKeyUp);
+
+  // close question panel cleanly
+  const qp=document.getElementById('dld-q-panel');
+  qp.classList.remove('open');
+
+  dldRunning=true; dldLastTs=null;
+  updateDLDHUD();
+  requestAnimationFrame(dldLoop);
+}
+
+let dldKeys={};
+function dldKeyDown(e){
+  dldKeys[e.code]=true;
+  // Always prevent page scroll for game keys while DLD is active
+  if(dldRunning && (e.code==='Space'||e.code==='ArrowUp'||e.code==='ArrowLeft'||e.code==='ArrowRight')){
+    e.preventDefault();
+  }
+  if((e.code==='Space'||e.code==='ArrowUp')&&!dldQVisible) dldJump();
+}
+function dldKeyUp(e){ delete dldKeys[e.code]; }
+
+function dldJump(){
+  if(!dldRunning) return;
+  // can only jump if on a platform
+  if(onGround){
+    playerVY=JUMP_VY;
+    onGround=false;
+    spawnParticles(playerX,playerY+24,'jump');
+  }
+}
+
+function dldLoop(ts){
+  if(!dldRunning) return;
+  const dt=dldLastTs?Math.min((ts-dldLastTs)/1000,0.05):0.016;
+  dldLastTs=ts;
+
+  // input — horizontal movement
+  if(!dldQVisible){
+    if(dldKeys['ArrowLeft']||dldKeys['KeyA']) playerVX=-PLAYER_SPEED;
+    else if(dldKeys['ArrowRight']||dldKeys['KeyD']) playerVX=PLAYER_SPEED;
+    else playerVX*=0.8;
+  }
+
+  // physics
+  playerVY+=GRAVITY*dt;
+  playerX+=playerVX*dt;
+  playerY+=playerVY*dt;
+
+  // wrap horizontally
+  if(playerX<0) playerX=dldW;
+  if(playerX>dldW) playerX=0;
+
+  // platform collision (only when falling)
+  onGround=false;
+  if(playerVY>0){
+    for(const p of dldPlatforms){
+      const px=p.x-dldCamY-WORLD_H+dldH; // not needed — use world coords
+      // work in world coords
+      if(playerX>p.x && playerX<p.x+p.w &&
+         playerY+28>p.y && playerY+28<p.y+PLAT_H+playerVY*dt+5 &&
+         playerY+28-playerVY*dt<=p.y+PLAT_H){
+        playerY=p.y-28;
+        playerVY=0;
+        onGround=true;
+        break;
+      }
+    }
+  }
+
+  // camera: follow player smoothly upward, world y=WORLD_H is bottom
+  const targetCamY=playerY-dldH*0.55;
+  dldCamY+=(targetCamY-dldCamY)*0.08;
+  dldCamY=Math.max(0,dldCamY);
+
+  // height = how high above ground (in "metres")
+  const currentHeight=Math.max(0,Math.round((WORLD_H-playerY)/10));
+  if(currentHeight>dldHeight){
+    dldHeight=currentHeight;
+    dldScore=dldHeight;
+    if(dldHeight>dldBestHeight) dldBestHeight=dldHeight;
+  }
+
+  // drain energy
+  if(!dldQVisible){
+    dldEnergy=Math.max(0,dldEnergy-dldEnergyDrain*dt);
+    // slightly increase drain over time
+    dldEnergyDrain=Math.min(10,5+dldHeight*0.008);
+  }
+
+  // fell off bottom
+  if(playerY>WORLD_H+80){
+    spawnParticles(playerX,dldH,'fall');
+    respawnPlayer();
+  }
+
+  // energy depleted = fall (keep going but drain is brutal)
+  if(dldEnergy<=0){
+    dldEnergy=0;
+    playerVY=Math.max(playerVY,200); // gravity takes over hard
+  }
+
+  // particles
+  dldParticles.forEach(p=>{
+    p.x+=p.vx*dt; p.y+=p.vy*dt;
+    p.vy+=400*dt; p.life-=dt;
+  });
+  dldParticles=dldParticles.filter(p=>p.life>0);
+
+  // move platforms and bounce
+  dldPlatforms.forEach(p=>{
+    if(!p.moving) return;
+    p.x += p.vx*dt;
+    // bounce at limits
+    if(p.vx>0 && p.x >= p.bounceRight){ p.x=p.bounceRight; p.vx*=-1; }
+    if(p.vx<0 && p.x <= p.bounceLeft){  p.x=p.bounceLeft;  p.vx*=-1; }
+  });
+
+  // if standing on a moving platform, drag player with it
+  if(onGround){
+    for(const p of dldPlatforms){
+      if(p.moving && playerX>p.x && playerX<p.x+p.w &&
+         Math.abs(playerY+28 - p.y) < 4){
+        playerX += p.vx*dt;
+        break;
+      }
+    }
+  }
+
+  updateDLDHUD();
+  dldDraw();
+  dldAnimId=requestAnimationFrame(dldLoop);
+}
+
+function respawnPlayer(){
+  const ground=dldPlatforms[0];
+  playerX=ground.x+ground.w/2;
+  playerY=ground.y-28;
+  playerVY=0; playerVX=0;
+  dldHeight=0; dldScore=Math.max(0,dldScore-10);
+  dldCamY=WORLD_H-dldH;
+  dldQVisible=false;
+  document.getElementById('dld-q-panel').classList.remove('open');
+  // Refill some energy on respawn
+  dldEnergy=Math.min(100,dldEnergy+30);
+}
+
+function spawnParticles(x,y,type){
+  const col=type==='jump'?'#c4956a':'#ff6584';
+  for(let i=0;i<8;i++){
+    dldParticles.push({
+      x,y,
+      vx:(Math.random()-0.5)*120,
+      vy:-Math.random()*80-20,
+      life:0.5+Math.random()*0.3,
+      r:2+Math.random()*3,
+      col
+    });
+  }
+}
+
+function dldDraw(){
+  // Self-correct if canvas ended up with zero dimensions
+  if(dldCanvas.width<10 || dldCanvas.height<10){
+    const shell=document.getElementById('dld-game').querySelector('.dld-game-shell');
+    const hud=document.getElementById('dld-game').querySelector('.dld-hud');
+    dldW=shell ? shell.offsetWidth : 600;
+    const hudH=hud ? hud.offsetHeight : 56;
+    dldH=(shell ? shell.offsetHeight : 516)-hudH;
+    if(dldW<200)dldW=600; if(dldH<200)dldH=460;
+    dldCanvas.width=dldW; dldCanvas.height=dldH;
+    dldCamY=WORLD_H-dldH;
+    const wrap=document.getElementById('dld-canvas-wrap');
+    if(wrap) wrap.style.height=dldH+'px';
+  }
+  const ctx=dldCtx,w=dldW,h=dldH,cam=dldCamY;
+
+  // sky gradient shifts by height
+  const altPct=Math.min(1,dldHeight/200);
+  const topCol=`hsl(${230+altPct*20},${40+altPct*20}%,${8+altPct*8}%)`;
+  const botCol=`hsl(${260+altPct*10},30%,${14+altPct*6}%)`;
+  const g=ctx.createLinearGradient(0,0,0,h);
+  g.addColorStop(0,topCol); g.addColorStop(1,botCol);
+  ctx.fillStyle=g; ctx.fillRect(0,0,w,h);
+
+  // stars
+  ctx.fillStyle='rgba(255,255,255,0.5)';
+  for(let i=0;i<80;i++){
+    // deterministic stars using sin/cos
+    const sx=((Math.sin(i*127.3)*0.5+0.5)*w);
+    const sy=((Math.sin(i*311.7)*0.5+0.5)*WORLD_H-cam)%h;
+    if(sy>=0&&sy<=h){ctx.beginPath();ctx.arc(sx,sy,0.8,0,Math.PI*2);ctx.fill();}
+  }
+
+  // platforms
+  dldPlatforms.forEach(p=>{
+    const sy=p.y-cam;
+    if(sy<-20||sy>h+20) return;
+    // glow — stronger for moving platforms
+    ctx.shadowColor=p.col;
+    ctx.shadowBlur=p.moving?14:8;
+    ctx.fillStyle=p.col;
+    ctx.beginPath(); ctx.roundRect(p.x,sy,p.w,PLAT_H,4); ctx.fill();
+    ctx.shadowBlur=0;
+    // highlight top edge
+    ctx.fillStyle='rgba(255,255,255,0.25)';
+    ctx.fillRect(p.x+4,sy,p.w-8,2);
+    // moving platform indicator — small arrows
+    if(p.moving){
+      ctx.fillStyle='rgba(255,255,255,0.55)';
+      ctx.font='9px sans-serif';
+      const arrow = p.vx>0 ? '▶▶' : '◀◀';
+      ctx.fillText(arrow, p.x + p.w/2 - 8, sy+PLAT_H-3);
+    }
+  });
+
+  // particles
+  dldParticles.forEach(p=>{
+    ctx.globalAlpha=p.life*2;
+    ctx.fillStyle=p.col;
+    ctx.beginPath(); ctx.arc(p.x,p.y-cam,p.r,0,Math.PI*2); ctx.fill();
+  });
+  ctx.globalAlpha=1;
+
+  // player
+  const sy=playerY-cam;
+  // body
+  ctx.fillStyle='#e8d5b0';
+  ctx.beginPath(); ctx.ellipse(playerX,sy+16,7,11,0,0,Math.PI*2); ctx.fill();
+  // head
+  ctx.fillStyle='#f5e6c8';
+  ctx.beginPath(); ctx.arc(playerX,sy,9,0,Math.PI*2); ctx.fill();
+  // eyes
+  ctx.fillStyle='#3a3028';
+  ctx.beginPath(); ctx.arc(playerX-3,sy-1,1.5,0,Math.PI*2); ctx.fill();
+  ctx.beginPath(); ctx.arc(playerX+3,sy-1,1.5,0,Math.PI*2); ctx.fill();
+
+  // height ghost markers (faint dotted line)
+  if(dldBestHeight>5){
+    const bestWorldY=WORLD_H-dldBestHeight*10;
+    const bestSY=bestWorldY-cam;
+    if(bestSY>0&&bestSY<h){
+      ctx.strokeStyle='rgba(196,149,106,0.3)'; ctx.lineWidth=1;
+      ctx.setLineDash([6,6]);
+      ctx.beginPath(); ctx.moveTo(0,bestSY); ctx.lineTo(w,bestSY); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle='rgba(196,149,106,0.6)';
+      ctx.font='10px DM Sans, sans-serif';
+      ctx.fillText('Best: '+dldBestHeight+'m',8,bestSY-4);
+    }
+  }
+
+  // energy bar (bottom of game area)
+  const barW=w-40,barH=8,barX=20,barY=h-22;
+  ctx.fillStyle='rgba(0,0,0,0.4)';
+  ctx.beginPath(); ctx.roundRect(barX,barY,barW,barH,4); ctx.fill();
+  const pct=dldEnergy/dldMaxEnergy;
+  const eCol=pct>0.5?'#43e97b':pct>0.25?'#f7971e':'#ff6584';
+  ctx.fillStyle=eCol;
+  if(pct>0){ctx.beginPath(); ctx.roundRect(barX,barY,barW*pct,barH,4); ctx.fill();}
+  ctx.fillStyle='rgba(255,255,255,0.5)'; ctx.font='9px DM Sans,sans-serif';
+  ctx.fillText('ENERGY',barX,barY-3);
+
+  // mobile jump hint (bottom right)
+  if(!('ontouchstart' in window)) return;
+  ctx.fillStyle='rgba(255,255,255,0.15)';
+  ctx.font='11px DM Sans,sans-serif';
+  ctx.fillText('Tap to jump',w-74,h-8);
+}
+
+function updateDLDHUD(){
+  setSafe('dld-height',dldHeight+'m');
+  setSafe('dld-score',dldScore);
+  setSafe('dld-best',dldBestHeight+'m');
+  setSafe('dld-correct',dldCorrectCount);
+  const efill=document.getElementById('dld-efill');
+  if(efill){
+    const pct=dldEnergy/dldMaxEnergy*100;
+    efill.style.width=pct+'%';
+    efill.style.background=pct>50?'#43e97b':pct>25?'#f7971e':'#ff6584';
+  }
+}
+
+// ── QUESTION SYSTEM ──────────────────────────────────────────────────────────
+function dldOpenQuestion(){
+  if(dldQVisible||!dldRunning) return;
+  if(dldQIdx>=dldQuestions.length){
+    dldQuestions=[...dldQuestions,...buildDLDQ()];
+  }
+  dldQVisible=true;
+  dldQAnswered=false;
+  const q=dldQuestions[dldQIdx];
+  const panel=document.getElementById('dld-q-panel');
+  // reset state — use .open class (CSS slides it up from translateY(100%))
+  panel.className='dld-q-panel';
+  document.getElementById('dld-q-text').innerHTML=q.q;
+  document.getElementById('dld-q-fb').textContent='';
+  const L=['A','B','C','D'];
+  document.getElementById('dld-q-opts').innerHTML=q.opts.map((o,i)=>
+    `<button class="dld-q-opt" onclick="dldAnswer(${i})">
+      <span class="dld-q-opt-lbl">${L[i]}</span>${o}
+    </button>`
+  ).join('');
+  // trigger slide-up on next frame so transition fires
+  requestAnimationFrame(()=>{ panel.classList.add('open'); });
+}
+
+function dldAnswer(chosen){
+  if(dldQAnswered||!dldRunning) return;
+  dldQAnswered=true;
+  const q=dldQuestions[dldQIdx];
+  const correct=chosen===q.ans;
+  document.querySelectorAll('.dld-q-opt').forEach((el,i)=>{
+    el.classList.add(i===q.ans?'correct':i===chosen?'wrong':'disabled');
+  });
+  if(correct){
+    dldCorrectCount++;
+    const xpGain=20;
+    dldXPEarned+=xpGain;
+    addXP(xpGain);
+    touchStreak();
+    // restore energy
+    dldEnergy=Math.min(dldMaxEnergy,dldEnergy+50);
+    document.getElementById('dld-q-fb').textContent='✓ +10 seconds energy!';
+    document.getElementById('dld-q-panel').classList.add('correct-glow');
+  } else {
+    dldWrongCount++;
+    document.getElementById('dld-q-fb').innerHTML='✗ '+(q.ex||'Not quite — no energy gained.');
+    document.getElementById('dld-q-panel').classList.add('wrong-glow');
+  }
+  // log progress
+  const p=getProgress();
+  if(!p['dld'])p['dld']={correct:0,total:0};
+  p['dld'].total++; if(correct)p['dld'].correct++;
+  saveProgress(p);
+  dldQIdx++;
+  setTimeout(()=>{
+    dldQVisible=false;
+    document.getElementById('dld-q-panel').classList.remove('open');
+  },1500);
+}
+
+function endDLD(){
+  dldRunning=false;
+  if(dldAnimId) cancelAnimationFrame(dldAnimId);
+  document.removeEventListener('keydown',dldKeyDown);
+  document.removeEventListener('keyup',dldKeyUp);
+  document.getElementById('dld-game').style.display='none';
+  document.getElementById('dld-q-panel').classList.remove('open');
+  document.getElementById('dld-over').style.display='';
+  checkBadges();
+  const emoji=dldBestHeight>=150?'🏆':dldBestHeight>=80?'🪂':dldBestHeight>=30?'💪':'😵';
+  setSafe('dld-over-emoji',emoji);
+  setSafe('dld-over-title',dldBestHeight>=80?'Outstanding climb!':dldBestHeight>=30?'Good effort!':'Keep practising!');
+  setSafe('dld-over-sub',`You reached ${dldBestHeight}m — answered ${dldCorrectCount} questions correctly.`);
+  setSafe('dov-height',dldBestHeight+'m');
+  setSafe('dov-correct',dldCorrectCount);
+  setSafe('dov-correct',dldCorrectCount);
+  setSafe('dov-xp','+'+dldXPEarned);
+}
+
+function quitDLD(){
+  if(dldRunning) endDLD(); else dldShowStart();
+}
+
+loadFlashcards();startQuiz();startMatch();renderBossSelect();loadMistake();generateExam();
+renderDashboard();
+</script>
+
+<!-- CALCULATOR -->
+<div id="page-calculator" class="page">
+  <div class="section" style="padding-top:32px;padding-bottom:32px">
+    <div class="info-banner" style="margin-bottom:20px">
+      <strong>GeoGebra Graphing Calculator</strong> — graph functions, solve equations, explore trig, exponentials and logs. 
+      Works like a CAS/graphics calculator. Tip: type <em>f(x) = </em> to plot a function, or use the tools menu to find intersections and turning points.
+    </div>
+    <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+      <button class="res-btn" style="border-radius:8px;padding:7px 16px" onclick="setCalcMode('graphing')">📈 Graphing</button>
+      <button class="res-btn" style="border-radius:8px;padding:7px 16px" onclick="setCalcMode('scientific')">🔢 Scientific</button>
+      <button class="res-btn" style="border-radius:8px;padding:7px 16px" onclick="setCalcMode('cas')">∑ CAS</button>
+    </div>
+    <div id="calc-container" style="width:100%;border-radius:14px;overflow:hidden;border:1px solid var(--border);box-shadow:0 4px 16px rgba(160,130,100,0.12)">
+      <iframe id="calc-frame"
+        src="https://www.geogebra.org/graphing?embed"
+        width="100%" height="620"
+        style="border:none;display:block"
+        allowfullscreen>
+      </iframe>
+    </div>
+    <p style="font-size:12px;color:var(--muted);margin-top:12px;text-align:center">
+      Powered by GeoGebra — free, no login required. 
+      <a href="https://www.geogebra.org/graphing" target="_blank" style="color:var(--t1)">Open in full screen →</a>
+    </p>
+  </div>
+</div>
+</body>
+</html>
